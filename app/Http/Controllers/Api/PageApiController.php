@@ -11,7 +11,7 @@ class PageApiController extends Controller
    // show data of page table
    public function list($id=null){
     $pages = Page::whereStatus(1)->get();
-
+    if($pages->count()>0){
     foreach ($pages as $key => $page) {
         $pages[$key]['image'] = '/storage/page/' . $page->image;
         // $pages[$key]['image'] = '/storage/page/' . $page->image;
@@ -21,11 +21,20 @@ class PageApiController extends Controller
 
     $response = [
         'success' => true,
+        'message' => 'page list',
         'data' => $data,
-        'message' => ''
     ];
 
     return response()->json($response,200);
+    }else{
+    $response = [
+        'success' => true,
+        'message' => 'No Page Available',
+        'data' => '',
+    ];
+
+    return response()->json($response,200);
+}
     // return $pages;
    }
 

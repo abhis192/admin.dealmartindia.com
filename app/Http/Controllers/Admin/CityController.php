@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\State;
 use App\Models\City;
 use App\Models\CityMapping;
-use App\Models\DeliveryOption;
+// use App\Models\DeliveryOption;
 use DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,8 +22,8 @@ class CityController extends Controller
     {
         $cities = City::all();
         $states = State::all();
-        $delivery_options = DeliveryOption::all();
-        return view('admin.city.index', compact('cities','states','delivery_options'));
+        // $delivery_options = DeliveryOption::all();
+        return view('admin.city.index', compact('cities','states'));
     }
 
     /**
@@ -38,27 +38,10 @@ class CityController extends Controller
             'name' => 'required|string|unique:cities',
             'description' => 'nullable|string',
             'state_id' => 'required|integer',
-            // 'shipping_cost' => 'nullable',
+            'shipping_cost' => 'nullable',
             'status' => 'nullable'
         ]);
         $data = $request->all();
-
-
-
-        // // Product Gallery
-        // $galleryData['product_id'] = $product->id;
-        // if($request->hasfile('gallery')) {
-        //     foreach ($request->file('gallery') as $key => $value) {
-        //         $valueName = rand() . '.' . $value->getClientOriginalName();
-        //         $value->storeAs('public/product/',$valueName);
-        //         $galleryData['image'] = $valueName;
-        //         $productGallery = ProductGallery::create($galleryData);
-        //     }
-        // }
-
-
-
-
 
         $data['status'] = 0;
         if (!empty($request->status)) {
@@ -66,21 +49,6 @@ class CityController extends Controller
         }
 
         $city= City::create($data);
-
-
-
-
-        if(!empty($request->delivery_option)) {
-            foreach ($request->delivery_option as $key => $val) {
-                $cityData['city_id'] = $city->id;
-                // $tagData['delivery_option'] = $request->delivery_option;
-                $cityData['delivery_option'] = $val;
-                $deliveryCity = CityMapping::create($cityData);
-                }
-            }
-
-
-
 
         return redirect('/admin/city')->with('success','City created successfully.');
     }
@@ -97,9 +65,7 @@ class CityController extends Controller
         // $city_map = CityMapping::findOrFail($id);
         $cities = City::all();
         $states = State::whereStatus(1)->get();
-        $delivery_options = DeliveryOption::all();
-        $city_mapping = CityMapping::all();
-        return view('admin.city.edit', compact('city','states','cities','delivery_options'));
+        return view('admin.city.edit', compact('city','states','cities'));
     }
 
     /**
@@ -115,7 +81,7 @@ class CityController extends Controller
             'name' => 'required|string',
             'description' => 'nullable|string',
             'state_id' => 'required|integer',
-            // 'shipping_cost' => 'nullable',
+            'shipping_cost' => 'nullable',
             'status' => 'nullable'
         ]);
         $city = City::findOrFail($id);
@@ -127,17 +93,6 @@ class CityController extends Controller
         }
 
         $city->update($data);
-
-        $city->mappings->each->delete();
-        if(!empty($request->delivery_option)) {
-            // $city->mappings->each->delete();
-            foreach ($request->delivery_option as $key => $val) {
-                $cityData['city_id'] = $city->id;
-                // $tagData['delivery_option'] = $request->delivery_option;
-                $cityData['delivery_option'] = $val;
-                $deliveryCity = CityMapping::create($cityData);
-                }
-            }
         return redirect('/admin/city')->with('success','City updated successfully.');
     }
 

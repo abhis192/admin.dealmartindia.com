@@ -95,22 +95,8 @@
                                         {{-- shipping cost  --}}
                                         <div class="col-lg-12">
                                             <div class="form-group">
-                                                <label for="name" class="form-label">Set Delivery Option:</label>
-                                                {{-- <input type="number" id="name" class="form-control" name="delivery_option" placeholder="Enter Shipping Cost..." /> --}}
-
-                                                <select class="form-control select2 select2-multiple" name="delivery_option[]" multiple="multiple" data-placeholder="Enter Delivery Option..." >
-                                                    {{-- <option value="2">badarpur</option>
-                                                    <option value="3">Jaithpur</option>
-                                                    <option value="4">Meethapur</option> --}}
-                                                     <option value=""></option>
-                                                @if ($delivery_options->isNotEmpty())
-                                                    @foreach ($delivery_options as $row)
-                                                        <option value="{{ $row->id }}">{{ $row->option_name }}</option>
-                                                    @endforeach
-                                                @endif
-                                                </select>
-
-
+                                                <label for="name" class="form-label">Set Area Wise Shipping Cost:</label>
+                                                <input type="number" id="name" class="form-control" name="shipping_cost" placeholder="Enter Shipping Cost..." value="" />
                                                 <div class="valid-feedback">Looks good!</div>
                                                 <div class="invalid-feedback">This field is required. </div>
                                                 @error('shipping_cost')
@@ -158,7 +144,7 @@
                                     <th class="col-1">#</th>
                                     <th>City Name</th>
                                     <th>Assign State</th>
-                                    {{-- <th>Shipping Cost</th> --}}
+                                    <th>Shipping Cost</th>
                                     <th class="col-1">Published</th>
                                     <th class="col-1">Action</th>
                                 </tr>
@@ -173,11 +159,11 @@
                                     @else
                                     <td></td>
                                     @endif
-                                    {{-- <td>
+                                    <td>
                                         @if($city->shipping_cost)
                                         <b><i class="bx bx-rupee"></i>{{$city->shipping_cost}}.00</b>
                                         @endif
-                                    </td> --}}
+                                    </td>
                                     <td class="text-center">
                                         <form method="POST" action="{{ route('admin.city.toggle', $city->id) }}">
                                             @csrf

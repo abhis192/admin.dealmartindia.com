@@ -32,7 +32,7 @@ class AreaApiController extends Controller
     // show data of pincode table
     public function location($id){
 
-        $pincode = Pincode::wherePincode($id)->first();
+        $pincode = Pincode::whereName($id)->first();
         if (!$pincode) {
             return response(['message'=>'Pincode is not Available']);
         }

@@ -14,13 +14,10 @@ class PincodeApiController extends Controller
    }
 
    public function check(Request $request) {
-    // $pincode = Pincode::wherePincode($request->get('pincode'))->whereCityId($request->get('city_id'))->get();
-    // return response()->json($pincode);
 
-    // pincode
-    if(Pincode::whereStatus(1)->wherePincode($request->get('pincode'))->count()) {
+    if(Pincode::whereStatus(1)->whereName($request->get('pincode'))->count()) {
         if (Pincode::whereStatus(1)->wherePincode($request->get('pincode'))->whereCityId($request->get('city_id'))->count()) {
-            $pincode = Pincode::whereStatus(1)->wherePincode($request->get('pincode'))->whereCityId($request->get('city_id'))->get();
+            $pincode = Pincode::whereStatus(1)->whereName($request->get('pincode'))->whereCityId($request->get('city_id'))->get();
             $response = [
                 'success' => true,
                 'data' => $pincode,
@@ -31,17 +28,16 @@ class PincodeApiController extends Controller
             $response = [
                 'success' => false,
                 'data' => '',
-                'message' => 'Need to change your location/area'
+                'message' => 'Need to change your location'
             ];
             return response()->json($response,200);
         }
     } else {
-        // delivery not availble in this pincode
 
         $response = [
             'success' => false,
             'data' => '',
-            'message' => 'Delivery not available in your area'
+            'message' => 'Delivery not available in your location'
         ];
         return response()->json($response,200);
     }

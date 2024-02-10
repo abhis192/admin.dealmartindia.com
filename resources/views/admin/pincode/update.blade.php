@@ -10,7 +10,7 @@
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label for="name" class="form-label">Pincode <sup class="text-danger fs-5">*</sup> :</label>
-                        <input type="text" name="pincode" id="name" class="form-control" placeholder="Enter Pincode" value="{{ $pincode->pincode }}" />
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter Pincode" value="{{ $pincode->name }}" />
                     </div>
                 </div>
                 <div class="col-lg-12">

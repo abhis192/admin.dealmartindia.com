@@ -22,7 +22,7 @@
                     {{-- "javascript: void(0);" --}}
                     <a href= "{{route('admin.all-sellers')}}" class=" waves-effect">
                         <i class="bx bx-restaurant"></i>
-                        <span key="t-dashboards" >Kitchen</span>
+                        <span key="t-dashboards" >Franchise</span>
                     </a>
                     {{-- <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{route('admin.all-sellers')}}">All Seller</a></li>
@@ -42,16 +42,12 @@
                         {{-- <li><a href="{{route('admin.inhouse-product')}}">In House Products</a></li> --}}
                         {{-- <li><a href="{{route('admin.seller-product')}}">Seller Products</a></li> --}}
                         @endif
-                        <li><a href="{{route('admin.bulk-prices')}}">Bulk Price Setup</a></li>
+                        {{-- <li><a href="{{route('admin.bulk-prices')}}">Bulk Price Setup</a></li> --}}
                         @if(Auth::user()->hasPermissionTo('category_list'))
                         <li><a href="{{route('admin.product-category')}}">Product Category</a></li>
                         @endif
                         @if(Auth::user()->hasPermissionTo('type_list'))
                         <li><a href="{{route('admin.product-type')}}">Product Type</a></li>
-                        @endif
-
-                        @if(Auth::user()->hasPermissionTo('type_list'))
-                        <li><a href="{{route('admin.cake-flavour')}}">Cake Flavour</a></li>
                         @endif
                         {{-- @if(Auth::user()->hasPermissionTo('brands_list'))
                         <li><a href="{{route('admin.product-brand')}}">Brands</a></li>
@@ -65,24 +61,6 @@
                     </ul>
                 </li>
 
-
-                @if(Auth::user()->hasPermissionTo('shipping_list'))
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bxs-truck"></i>
-                        <span key="t-dashboards">Manage Delivery Opt</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{route('admin.deliveryoption')}}">Delivery Option</a></li>
-                        <li><a href="{{route('admin.slot')}}">Time Slot</a></li>
-                        {{-- <li><a href="{{route('admin.city')}}">Cities</a></li> --}}
-                        {{-- <li><a href="{{route('admin.pincode')}}">PIN Code</a></li> --}}
-                        {{-- <li><a href="{{route('admin.area')}}">Area</a></li> --}}
-                        {{-- <li><a href="{{route('admin.shipping-configuration')}}">Shipping Configuration</a></li> --}}
-                    </ul>
-                </li>
-                @endif
-
                 @if(Auth::user()->hasPermissionTo('shipping_list'))
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -94,8 +72,8 @@
                         <li><a href="{{route('admin.state')}}">States</a></li>
                         <li><a href="{{route('admin.city')}}">Cities</a></li>
                         <li><a href="{{route('admin.pincode')}}">PIN Code</a></li>
-                        <li><a href="{{route('admin.area')}}">Area</a></li>
-                        {{-- <li><a href="{{route('admin.shipping-configuration')}}">Shipping Configuration</a></li> --}}
+                        {{-- <li><a href="{{route('admin.area')}}">Area</a></li> --}}
+                        <li><a href="{{route('admin.shipping-configuration')}}">Shipping Configuration</a></li>
                     </ul>
                 </li>
                 @endif
@@ -222,10 +200,6 @@
                         {{-- <li><a href="{{route('admin.tax')}}">Tax Settings</a></li> --}}
                         <!-- <li><a href="#">Vat & TAX</a></li>    -->
                         <li><a href="{{route('admin.gateways')}}">Payment Gateway</a></li>
-
-                        <li><a href="{{route('admin.kitchen-price')}}">Kitchen Price</a></li>
-
-                        <li><a href="{{route('admin.kitchenPrice-Config')}}">Kitchen Price Config</a></li>
 
                         <!-- <li><a href="#">Order Configuration</a></li>
                         <li><a href="#">Login Configuration</a></li>    -->

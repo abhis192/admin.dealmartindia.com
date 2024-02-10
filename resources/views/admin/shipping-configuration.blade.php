@@ -10,7 +10,7 @@
 @section('content')
 <div class="page-content">
     <div class="container-fluid">
-        
+
         <!-- [ breadcrumb ] start -->
         <div class="row">
             <div class="col-12">
@@ -26,20 +26,20 @@
 
                 </div>
             </div>
-        </div> 
+        </div>
         <!-- [ breadcrumb ] end -->
 
         <div class="row">
-            <div class="col-xl-12">  
+            <div class="col-xl-12">
 
                 <form class="custom-form needs-validation" action="{{route('admin.shipping-configuration.update',$data->id)}}" method="post" novalidate>
                 	@method('PATCH')
                 	@csrf
-                    <div class="row"> 
+                    <div class="row">
                         <div class="col-lg-6">
 
                             <div class="card">
-                                <div class="card-header"> 
+                                <div class="card-header">
                                     <!-- <h4 class="card-title mb-0">Free Shipping</h4>  -->
                                     <div class="form-group d-flex justify-content-between align-items-center m-0">
                                         <label for="name" class="form-label fw-bold fs-5">Enable Free Shipping</label>
@@ -51,11 +51,11 @@
                                             <div class="text-danger">
                                                 <strong>{{ $message }}</strong>
                                             </div>
-                                        @enderror 
+                                        @enderror
                                     </div>
 
                                 </div>
-                                <div class="card-body">  
+                                <div class="card-body">
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="form-group">
@@ -71,39 +71,39 @@
 	                                                    </div>
 	                                                @enderror
                                                 </div>
-                                                <small class="text-muted"><b>Note::</b> Default Minimum Order Amount for Free Shipping is <b><i class="bx bx-rupee"></i>499.00</b>.</small>
+                                                <small class="text-muted"><b>Note::</b> Default Minimum Order Amount for Free Shipping is <b><i class="bx bx-rupee"></i>{{$data->min_order_to_ship}}</b>.</small>
                                             </div>
-                                        </div> 
+                                        </div>
 
-                                    </div> 
+                                    </div>
                                 </div>
                                 <div class="card-footer text-end">
                                     <button type="submit" class="btn btn-success waves-effect waves-light">Save Changes</button>
                                 </div>
                             </div>
-                            <!-- end card -->  
-                    
-                        </div> 
-                        <div class="col-lg-6"> 
+                            <!-- end card -->
+
+                        </div>
+                        <div class="col-lg-6">
 
                             <div class="card">
-                                <div class="card-header"> 
+                                <div class="card-header">
                                     <!-- <h4 class="card-title mb-0">Free Shipping</h4>  -->
                                     <div class="form-group d-flex justify-content-between align-items-center m-0">
                                         <label for="name" class="form-label fw-bold fs-5">Univaseral Shipping Cost</label>
                                         <div class="square-switch">
                                             <input type="checkbox" name="universal_ship_status" id="square-switch2" switch="status" {{ $data->universal_ship_status == 1 ? "checked" : "" }}>
                                             <label for="square-switch2" data-on-label="Yes" data-off-label="No"></label>
-                                        </div> 
+                                        </div>
                                         @error('universal_ship_status')
                                             <div class="text-danger">
                                                 <strong>{{ $message }}</strong>
                                             </div>
-                                        @enderror   
+                                        @enderror
                                     </div>
 
                                 </div>
-                                <div class="card-body">  
+                                <div class="card-body">
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="form-group">
@@ -117,33 +117,33 @@
 			                                            <div class="text-danger">
 			                                                <strong>{{ $message }}</strong>
 			                                            </div>
-			                                        @enderror 
+			                                        @enderror
                                                 </div>
-                                                <small class="text-muted"><b>Note::</b> Default Minimum Order Amount for Free Shipping is <b><i class="bx bx-rupee"></i>49.00</b>.</small>
+                                                <small class="text-muted"><b>Note::</b> Default Minimum Order Amount for Free Shipping is <b><i class="bx bx-rupee"></i>{{$data->universal_ship_cost}}</b>.</small>
                                             </div>
-                                        </div> 
+                                        </div>
 
-                                    </div> 
+                                    </div>
                                 </div>
                                 <div class="card-footer text-end">
                                     <button type="submit" class="btn btn-success waves-effect waves-light">Save Changes</button>
                                 </div>
                             </div>
-                            <!-- end card --> 
-                    
+                            <!-- end card -->
+
                         </div>
 
-                        <div class="col-lg-6"> 
+                        <div class="col-lg-6">
 
                             <div class="card">
-                                <div class="card-header"> 
+                                <div class="card-header">
                                     <!-- <h4 class="card-title mb-0">Free Shipping</h4>  -->
                                     <div class="form-group d-flex justify-content-between align-items-center m-0">
-                                        <label for="name" class="form-label fw-bold fs-5">Universal Shipping Days</label> 
+                                        <label for="name" class="form-label fw-bold fs-5">Universal Shipping Days</label>
                                     </div>
 
                                 </div>
-                                <div class="card-body">  
+                                <div class="card-body">
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="form-group">
@@ -157,30 +157,30 @@
                                                         <div class="text-danger">
                                                             <strong>{{ $message }}</strong>
                                                         </div>
-                                                    @enderror 
+                                                    @enderror
                                                 </div>
-                                                <small class="text-muted"><b>Note::</b> Default Minimum days for Free Shipping is <b><i class="bx bx-rupee"></i>4 days</b>.</small>
+                                                <small class="text-muted"><b>Note::</b> Default Minimum days for Free Shipping is <b><i class="bx bx-rupee"></i>{{$data->universal_shipping_days}} days</b>.</small>
                                             </div>
-                                        </div> 
+                                        </div>
 
-                                    </div> 
+                                    </div>
                                 </div>
                                 <div class="card-footer text-end">
                                     <button type="submit" class="btn btn-success waves-effect waves-light">Save Changes</button>
                                 </div>
                             </div>
-                            <!-- end card --> 
-                    
-                        </div> 
+                            <!-- end card -->
+
+                        </div>
 
                     </div>
-                     
+
                 </form>
 
-            </div> <!-- end col --> 
-        </div> <!-- end row -->  
-        
-        
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+
+
     </div>
     <!-- container-fluid -->
 </div>

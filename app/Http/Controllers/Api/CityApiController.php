@@ -10,6 +10,24 @@ class CityApiController extends Controller
 {
      // show data of city table
    public function list($id=null){
-    return $id?City::find($id):City::whereStatus(1)->get();
+    $city=City::whereStatus(1)->get();
+    if($city->count()>0){
+    $data['cities'] = $city;
+
+    $response = [
+        'success' => true,
+        'message' => 'City list',
+        'data' => $data,
+    ];
+    return response()->json($response,200);
+    }
+    else{
+    $response = [
+        'success' => true,
+        'message' => 'City empty',
+        'data' => '',
+    ];
+    return response()->json($response,200);
+    }
    }
 }

@@ -49,7 +49,25 @@ class UserController extends Controller
     public function index()
     {
         $user = auth()->user();
-        return response()->json($user->addresses);
+        // return response()->json($user->addresses);
+
+        if($user->addresses->count()>0){
+        $data['addresses'] = $user->addresses;
+
+        $response = [
+            'success' => true,
+            'message' => 'address list',
+            'data' => $data,
+        ];
+        return response()->json($response,200);
+
+        }else
+        $response = [
+            'success' => false,
+            'message' => 'no address available',
+            'data' => '',
+        ];
+        return response()->json($response,200);
     }
 
     /**
@@ -76,7 +94,6 @@ class UserController extends Controller
             'city'=>'required',
             'pincode'=>'required',
             'address'=>'required',
-            'area'=>'required',
         ]);
         if($validator->fails()){
             return response()->json($validator->messages(),400);
@@ -92,21 +109,23 @@ class UserController extends Controller
                 $otherAddresses->each->update(['default'=>0]);
             }
              UserAddress::create($data);
-             $response=[
-                'message'=>'address added successfully',
-                'status'=>1
-               ];
-               $respCode=200;
+               $response = [
+                'success' => true,
+                'message' => 'Address added successfully',
+                'data' => '',
+            ];
+            return response()->json($response,200);
+
              DB::commit();
             }catch(\Exception $e){
                 DB::rollBack();
-                $response=[
-                    'message'=>'Internal Server Error',$e,
-                    'status'=>0
-                   ];
-                   $respCode=500;
+                   $response = [
+                    'success' => false,
+                    'message' => 'Internal Server Error',
+                    'data' => '',
+                ];
+                return response()->json($response,200);
             }
-            return response()->json($response,$respCode);
         }
     }
 
@@ -133,39 +152,15 @@ class UserController extends Controller
     {
         $useraddress=UserAddress::find($id);
         if(is_null($useraddress)){
-            return response()->json([
-                'message'=>'User Address does not exists',
-                'status'=>0
-            ],
-            404
-        );
+            $response = [
+                'success' => false,
+                'message' => 'User Address does not exists',
+                'data' => '',
+            ];
+            return response()->json($response,200);
         }else{
             DB::beginTransaction();
             try{
-                // $useraddress=$request->all();
-            //   $useraddress->label=$request['label'];
-            //   $useraddress->user_id=$request['user_id'];
-            //   $useraddress->default=$request['default'];
-            //   $useraddress->name=$request['name'];
-            //   $useraddress->email=$request['email'];
-            //   $useraddress->mobile=$request['mobile'];
-            //   $useraddress->country=$request['country'];
-            //   $useraddress->state=$request['state'];
-            //   $useraddress->city=$request['city'];
-            //   $useraddress->pincode=$request['pincode'];
-            //   $useraddress->address=$request['address'];
-            //   $useraddress->landmark=$request['landmark'];
-
-            //   $useraddress->default=$request['default'] = 0;
-            //   if (!empty($useraddress->default=$request['default'])) {
-            //       $otherAddresses = UserAddress::whereUserId(['user_id'])->get();
-            //       $otherAddresses->each->update(['default'=>0]);
-            //       $useraddress->default=$request['default'] = 1;
-            //   }
-
-            //   $useraddress->save();
-
-
             $address = UserAddress::findOrFail($id);
             $data = $request->all();
             $data['user_id'] = Auth::user()->id;
@@ -179,26 +174,25 @@ class UserController extends Controller
 
             $address->update($data);
 
-                DB::commit();
+            DB::commit();
             }catch(\Exception $err){
                 DB::rollBack();
                 $useraddress=null;
             }
            if(is_null($useraddress)){
-            return response()->json([
-                'message'=>'Internal Server Error',
-                'status'=>0,
-                'error_msg'=>$err->getMessage(),
-            ],
-            500
-        );
+            $response = [
+                'success' => false,
+                'message' => 'Internal Server Error',
+                'data' => '',
+            ];
+            return response()->json($response,200);
            }else{
-            return response()->json([
-                'message'=>'User Address Updated Successfully',
-                'status'=>1
-            ],
-            200
-        );
+            $response = [
+                'success' => true,
+                'message' => 'User Address Updated Successfully',
+                'data' => '',
+            ];
+            return response()->json($response,200);
            }
 
         }
@@ -212,37 +206,48 @@ class UserController extends Controller
         //
         $useraddress=UserAddress::find($id);
         if(is_null($useraddress)){
-            $response=[
-                'message'=>'user does not exists',
-                'status'=>0
+            $response = [
+                'success' => false,
+                'message' => 'User address does not exists',
+                'data' => '',
             ];
-            $respCode=404;
+            return response()->json($response,200);
         }else{
             DB::beginTransaction();
             try{
                $useraddress->delete();
                DB::Commit();
-               $response=[
-                'message'=>'user address deleted successfully',
-                'status'=>1
-               ];
-               $respCode=200;
+               $response = [
+                'success' => true,
+                'message' => 'user address deleted successfully',
+                'data' => '',
+            ];
+            return response()->json($response,200);
+
             }catch(\Exception $err){
                 DB::rollBack();
-                $response=[
-                    'message'=>'Internal Serve Error',
-                    'status'=>0
-                   ];
-                   $respCode=500;
+                   $response = [
+                    'success' => false,
+                    'message' => 'Internal Serve Error',
+                    'data' => '',
+                ];
+                return response()->json($response,200);
             }
         }
-        return response()->json($response,$respCode);
     }
 
     public function cart() {
         $user = auth()->user();
         $cart = Cart::whereUserId($user->id)->with('product','product.type','product.categories','product.categories','product.prices')->get();
-        return response()->json($cart);
+        $data['cart'] = $cart;
+
+        $response = [
+            'success' => true,
+            'message' => 'Cart list',
+            'data' => $data,
+        ];
+
+        return response()->json($response,200);
     }
 
  # Product Save In Cart

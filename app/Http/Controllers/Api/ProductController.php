@@ -125,8 +125,16 @@ class ProductController extends Controller
 
             return $product;
         });
+        $data['products']=$transformedProducts;
 
-        return response()->json($transformedProducts);
+        $response = [
+            'success' => true,
+            'message' => 'Product list',
+            'data' => $data,
+        ];
+
+        return response()->json($response,200);
+        // return response()->json($transformedProducts);
     }
 
     public function listBycity(Request $request) {
@@ -267,6 +275,7 @@ class ProductController extends Controller
             return $product;
         });
 
+
         return response()->json($transformedProducts);
     }
 
@@ -297,144 +306,22 @@ class ProductController extends Controller
                 $galleries->image='/storage/product/' .$galleries->image;
             }
         }
+        $data['product']=$product;
 
-        return response()->json($product);
+        $response = [
+            'success' => true,
+            'message' => 'Product detail',
+            'data' => $data,
+        ];
+
+        return response()->json($response,200);
     }
-
-
-
-    public function addonlist()
-    {
-        $products = Product::whereAddon(1)->wherePublished(1)-> with('user:id,name', 'type:id,name', 'categories.category', 'categories.category.type', 'tags', 'prices', 'gallery', 'reviews')
-            ->paginate(10);
-
-        foreach ($products as $key => $product) {
-            $products[$key]['image'] = '/storage/product/' . $product->image;
-
-            foreach ($product->gallery as $galleryKey => $gallery) {
-                $products[$key]['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery->image;
-            }
-
-            foreach ($product->categories as $categoryKey => $category) {
-                $categoryImagePath = $category->category->image;
-                $categoryIconPath = $category->category->icon;
-
-                // Check if the path already contains '/storage/category/'
-                if (strpos($categoryImagePath, '/storage/category/') !== 0) {
-                    $products[$key]['categories'][$categoryKey]['category']['image'] = '/storage/category/' . $categoryImagePath;
-                    $products[$key]['categories'][$categoryKey]['category']['icon'] = '/storage/category/' . $categoryIconPath;
-                }
-
-                $categoryImagePath = $category->category->type->image;
-                $categoryIconPath = $category->category->type->icon;
-
-                // Check if the path already contains '/storage/category/'
-                if (strpos($categoryImagePath, '/storage/type/') !== 0) {
-                $category->category->type->image = '/storage/type/' . $category->category->type->image;
-                $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
-                }
-            }
-        }
-
-        return response()->json($products);
-    }
-
-    public function addonlistByCity(Request $request)
-    {
-        $products = Product::whereAddon(1)->wherePublished(1)-> with('user:id,name', 'type:id,name', 'categories.category', 'categories.category.type', 'tags', 'gallery', 'reviews')
-        ->paginate(10);
-
-        foreach ($products as $key => $product) {
-            $products[$key]['image'] = '/storage/product/' . $product->image;
-
-            foreach ($product->gallery as $galleryKey => $gallery) {
-                $products[$key]['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery->image;
-            }
-
-            foreach ($product->categories as $categoryKey => $category) {
-                $categoryImagePath = $category->category->image;
-                $categoryIconPath = $category->category->icon;
-
-                // Check if the path already contains '/storage/category/'
-                if (strpos($categoryImagePath, '/storage/category/') !== 0) {
-                    $products[$key]['categories'][$categoryKey]['category']['image'] = '/storage/category/' . $categoryImagePath;
-                    $products[$key]['categories'][$categoryKey]['category']['icon'] = '/storage/category/' . $categoryIconPath;
-                }
-
-                $categoryImagePath = $category->category->type->image;
-                $categoryIconPath = $category->category->type->icon;
-
-                // Check if the path already contains '/storage/category/'
-                if (strpos($categoryImagePath, '/storage/type/') !== 0) {
-                $category->category->type->image = '/storage/type/' . $category->category->type->image;
-                $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
-                }
-            }
-
-            $productPricing = PricingRule::whereProductId($product->id)->first();
-
-            if ($request->has('session_id')){
-                $cart_prod = Cart::whereUserId($request->get('session_id'))->whereProductId($product->id)->count();
-                $product['in_cart'] = $cart_prod;
-            }else {
-                $user = auth()->user();
-                if ($user) {
-                    $cart_prod = Cart::whereUserId($user->id)->whereProductId($product->id)->count();
-                    $product['in_cart'] = $cart_prod;
-                }
-            }
-
-            if ($productPricing) {
-                $city_ids_array = explode(', ', $productPricing->city_id);
-                if (in_array($request->get('city_id'), $city_ids_array)) {
-                    // $product['product_id'] = ($productPricing->product_id);
-                    $product['pricing'] = json_decode($productPricing->pricing_rules);
-
-                    $newPricing = [];
-                    foreach ($product['pricing'] as $key => $value) {
-                        $pricingArray = (array) $value;
-                        $pricingArray['id'] = $key;
-                        $newPricing[] = (object) $pricingArray;
-                    }
-
-                    $product['pricing'] = $newPricing;
-
-                } else {
-                    $product['pricing'] = $product->prices;
-                }
-            } else {
-                $product['pricing'] = $product->prices;
-            }
-        }
-
-        return response()->json($products);
-    }
-
-    // public function relatedProducts($productId)
-    // {
-
-    // $product = Product::findOrFail($productId);
-	// $products = Product::whereCategoryId($product->category_id)->inRandomOrder()->take(5)->get();
-
-
-    // foreach ($products as $key => $product) {
-    //     $products[$key]['image'] = '/storage/product/' . $product->image;
-    // }
-	// return $products;
-
-    //     // $products = Product::whereAddon(1)->wherePublished(1)-> with('user:id,name', 'type:id,name', 'categories.category', 'categories.category.type', 'tags', 'prices', 'gallery', 'reviews')
-    //     //     ->paginate(10);
-    // }
-
-
-
-
 
     public function relatedProducts(Request $request, $productId)
     {
         $productc = Product::findOrFail($productId);
         $products = Product::whereCategoryId($productc->category_id)->inRandomOrder()->take(5)->wherePublished(1)-> with('user:id,name', 'type:id,name', 'categories.category', 'categories.category.type', 'tags', 'gallery', 'reviews')
-        ->paginate(10);
+        ->get();
 
         foreach ($products as $key => $product) {
             $products[$key]['image'] = '/storage/product/' . $product->image;
@@ -498,7 +385,13 @@ class ProductController extends Controller
                 $product['pricing'] = $product->prices;
             }
         }
+        $data['products']=$products;
+        $response = [
+            'success' => true,
+            'message' => 'Product detail',
+            'data' => $data,
+        ];
 
-        return response()->json($products);
+        return response()->json($response,200);
     }
 }

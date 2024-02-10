@@ -14,163 +14,30 @@ use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
-
-    //for guest user
-
-    //cart item for guest
-    public function cartGuest(Request $request) {
-        $sessionId = $request->input('session_id', null);
-
-        if (!$sessionId) {
-            $sessionId = session()->getId();
-        }
-
-        $cart = Cart::whereUserId($sessionId)->with('product','product.type','product.categories','product.categories','product.prices')->get();
-        return response()->json([
-            'message' => 'Guest user cart list',
-            'session_id' => $sessionId,
-            'cart' => $cart
-        ]);
-    }
-
-    //add cart for guest
-    public function addcartGuest(Request $request) {
-        $sessionId = $request->input('session_id', null);
-
-        if (!$sessionId) {
-            $sessionId = session()->getId();
-        }
-
-        $chkCart = Cart::where(['user_id' => $sessionId, 'product_id' => $request->product_id,'qty_weight'=>$request->qty_weight])->first();
-        if($chkCart) {
-            $chkCart->update(['qty'=>$chkCart->qty + 1]);
-            return response()->json(['success' => true, 'message' => 'Quantity added successfully']);
-
-        }
-        $data=$request->all();
-        $data['user_id']=$sessionId;
-
-        if($request->hasFile('photo_cake')){
-            $fileImage = $request->file('photo_cake');
-            $fileImageName = rand() . '.' . $fileImage->getClientOriginalName();
-            $fileImage->storeAs('public/product/',$fileImageName);
-            $data['photo_cake'] = $fileImageName;
-        }
-
-        Cart::create($data);
-        return response()->json(['message' => 'Guest user cartitem added', 'session_id' => $sessionId]);
-    }
-
-    //update cartitem for guest
-    public function updatecartGuest(Request $request, $id) {
-        // Check if the user sends a session_id in the request
-        // $sessionId = $request->input('session_id', null);
-
-        // if (!$sessionId) {
-        //     // If no session_id provided, create a new session
-        //     $sessionId = session()->getId();
-        // }
-             $carts=Cart::find($id);
-             if(is_null($carts)){
-                return response()->json([
-                    'message'=>'cart empty',
-                    'status'=>0
-                ],
-                404
-            );
-        }else{
-            DB::beginTransaction();
-            try{
-                // $useraddress=$request->all();
-            //   $carts->user_id=$uid;
-            //   $carts->product_id=$request['product_id'];
-              $carts->qty=$request['qty'];
-            //   $carts->qty_type=$request['qty_type'];
-            //   $carts->qty_weight=$request['qty_weight'];
-            //   $carts->eggless=$request['eggless'];
-            //   $carts->heart_shape=$request['heart_shape'];
-            //   $carts->photo_cake=$request['photo_cake'];
-            //   $carts->msg_cake=$request['msg_cake'];
-              $carts->save();
-
-                DB::commit();
-            }catch(\Exception $err){
-                DB::rollBack();
-                $carts=null;
-            }
-        }
-
-        return response()->json(['message' => 'Guest user  cart item updated', 'cart_id' => $id]);
-    }
-
-    //delete cart item for guest
-    public function destroyCartGuest(Request $request, $id) {
-        // Check if the user sends a session_id in the request
-        $sessionId = $request->input('session_id', null);
-
-        if (!$sessionId) {
-            // If no session_id provided, create a new session
-            $sessionId = session()->getId();
-        }
-
-        $carts=Cart::find($id);
-        if(is_null($carts)){
-            $response=[
-                'message'=>'cart does not exists',
-                'status'=>0
-            ];
-            $respCode=404;
-        }else{
-            DB::beginTransaction();
-            try{
-               $carts->delete();
-               DB::Commit();
-               $response=[
-                'message'=>'cart deleted successfully',
-                'status'=>1
-               ];
-               $respCode=200;
-            }catch(\Exception $err){
-                DB::rollBack();
-                $response=[
-                    'message'=>'Internal Serve Error',
-                    'status'=>0
-                   ];
-                   $respCode=500;
-            }
-        }
-        // return response()->json($response,$respCode);
-
-        // Implement your logic to update the cart item with $id based on $sessionId
-        // For example, you might want to update the cart item in a database
-
-        return response()->json(['message' => 'Guest user cart item deleted', 'session_id' => $sessionId, 'cart_id' => $id]);
-    }
-
-
-
     //for authenticated users
-
     //cartitem for auth user
     public function cart(Request $request)
     {
         $user = auth()->user();
         if ($user) {
             $uid = $user->id;
-        } else {
-            $uid = session()->getId();
         }
-
-        if (auth()->check()) {
-            // Authenticated user logic
             $cart = Cart::whereUserId($uid)->with('product','product.type','product.categories','product.categories','product.prices')->get();
-            return response()->json($cart);
-            // return $this->cartAuthenticated($request);
+            if($cart->count()>0){
+                $data['cart'] = $cart;
+                $response = [
+                    'success' => true,
+                    'message' => 'Cart list',
+                    'data' => $data,
+                ];
+                return response()->json($response,200);
         } else {
-            // Guest user logic
-            $cart = Cart::whereUserId($uid)->with('product','product.type','product.categories','product.categories','product.prices')->get();
-            return response()->json($cart);
-            // return $this->cartGuest($request);
+            $response = [
+                'success' => true,
+                'message' => 'Cart empty',
+                'data' => '',
+            ];
+            return response()->json($response,200);
         }
     }
 
@@ -180,17 +47,19 @@ class CartController extends Controller
         $user = Auth::user();
         if ($user) {
             $uid = $user->id;
-        } else {
-            $uid = session()->getId();
         }
-
         if (auth()->check()) {
             // Authenticated user logic
             {
                 $chkCart = Cart::where(['user_id' => $uid, 'product_id' => $request->product_id,'qty_weight'=>$request->qty_weight])->first();
                 if ($chkCart) {
                     $chkCart->update(['qty'=>$chkCart->qty + 1]);
-                    return response()->json(['success' => true, 'message' => 'Quantity added successfully']);
+                    $response = [
+                        'success' => true,
+                        'message' => 'Quantity added successfully',
+                        'data' => '',
+                    ];
+                    return response()->json($response,200);
                 }
                $data=$request->all();
 
@@ -203,36 +72,14 @@ class CartController extends Controller
                 $data['photo_cake'] = $fileImageName;
             }
                Cart::create($data);
-
-               return response()->json([
-                            'message'=>'Product Added in Cart Successfully',
-                            'status'=>1
-                       ],
-                       200
-                   );
+                   $response = [
+                    'success' => true,
+                    'message' => 'Product Added in Cart Successfully',
+                    'data' => '',
+                ];
+                return response()->json($response,200);
             }
             // return $this->addcartAuthenticated($request);
-        } else {
-            // Guest user logic
-            $sessionId = session()->getId();
-             # Check Already Exist Aur Not
-             $chkCart = Cart::where(['user_id' => $sessionId, 'product_id' => $request->product_id])->first();
-             if ($chkCart) {
-                 return response()->json(['success' => true, 'message' => 'Remove from cart if the item is already added']);
-             }
-            $data=$request->all();
-            $data['user_id']=$uid;
-            Cart::create($data);
-
-            return response()->json([
-                         'message'=>'Product Added in Cart Successfully',
-                         'status'=>1
-                    ],
-                    200
-                );
-        //  }
-
-            // return $this->addcartGuest($request);
         }
     }
 
@@ -451,7 +298,7 @@ class CartController extends Controller
     }
 
 
-    //new cartitems for auth user
+    //cartitems for auth user
     public function cartItems(Request $request)
     {
         $user = auth()->user();

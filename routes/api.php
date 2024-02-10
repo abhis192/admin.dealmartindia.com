@@ -32,6 +32,8 @@ Route::post('register-with-otp', [App\Http\Controllers\Api\AuthController::class
 Route::post('generate-otp', [App\Http\Controllers\Api\AuthController::class, 'generateOtp']);
 Route::post('otp-login', [App\Http\Controllers\Api\AuthController::class, 'verifyOtp']);
 
+Route::post('login-via-otp', [App\Http\Controllers\Api\AuthController::class, 'loginViaOtp']);
+
 //login with google
 Route::get('auth/google', [App\Http\Controllers\Api\AuthController::class, 'googleLogin']);
 Route::any('auth/google/callback', [App\Http\Controllers\Api\AuthController::class, 'callbackFromGoogle'])->name('callback');

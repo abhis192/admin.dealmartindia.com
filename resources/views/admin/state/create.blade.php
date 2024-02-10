@@ -1,6 +1,6 @@
-<div id="create-pincode-wrapper">
+<div id="create-state-wrapper">
     <div class="modal-header">
-        <h5 class="modal-title">Add Pincode</h5>
+        <h5 class="modal-title">Add State</h5>
         <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
@@ -9,24 +9,23 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="form-group">
-                        <label for="name" class="form-label">Pincode <sup class="text-danger fs-5">*</sup> :</label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter Pincode"/>
+                        <label for="name" class="form-label">State <sup class="text-danger fs-5">*</sup> :</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter State"/>
                     </div>
                 </div>
                 <div class="col-lg-12">
                     <div class="form-group">
-                        <label for="city" class="form-label">City <sup class="text-danger fs-5">*</sup> :</label>
-                        <select class="form-control" name="city" id="city" data-placeholder="Choose city">
+                        <label for="country" class="form-label">Country <sup class="text-danger fs-5">*</sup> :</label>
+                        <select class="form-control" name="country" id="country" data-placeholder="Choose Country">
                             <option value=""></option>
-                            @if ($cities->isNotEmpty())
-                                @foreach ($cities as $row)
+                            @if ($countries->isNotEmpty())
+                                @foreach ($countries as $row)
                                     <option value="{{ $row->id }}">{{ $row->name }}</option>
                                 @endforeach
                             @endif
                         </select>
                     </div>
                 </div>
-
                 <div class="col-lg-12">
                     <div class="form-group">
                         <label for="name" class="form-label fw-bold">Status <sup class="text-danger fs-5">*</sup> :</label>
@@ -46,16 +45,16 @@
 </div>
 
 <script>
-    initSelect2Custom('#create-pincode-wrapper [name="city"]', '#create-pincode-wrapper');
+    initSelect2Custom('#create-state-wrapper [name="country"]', '#create-state-wrapper');
 
-    $('#create-pincode-wrapper').on('click', '#createBtn', function (e) {
+    $('#create-state-wrapper').on('click', '#createBtn', function (e) {
         e.preventDefault();
         const $btn = $(this);
 
         $.ajax({
             dataType: 'json',
             type: 'POST',
-            url: "{{ route('admin.pincode.create') }}",
+            url: "{{ route('admin.state.create') }}",
             data: $('#addFrm').serialize(),
             beforeSend: () => {
                 $btn.attr('disabled', true);
@@ -69,7 +68,7 @@
                 $btn.attr('disabled', false);
                 showToastr('success', response.message);
                 reloadTable('data-table');
-                $('#create-pincode-wrapper .close').click();
+                $('#create-state-wrapper .close').click();
             }
         });
     });

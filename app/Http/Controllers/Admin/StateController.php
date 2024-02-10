@@ -11,113 +11,167 @@ use Illuminate\Support\Facades\Validator;
 
 class StateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function getIndex(Request $request)
     {
-        $states = State::all();
-        $countries = Country::all();
-        return view('admin.state.index', compact('states','countries'));
+        // \Can::access('pin_codes');
+
+        return view('admin.state.index');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function getList(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|unique:cities',
-            'description' => 'nullable|string',
-            'country_id' => 'required|integer',
-            'status' => 'nullable'
+        $list = \App\Models\State::select('states.*','countries.name AS country')
+            ->leftJoin('countries', 'countries.id', '=', 'states.country_id');
+
+        return \DataTables::of($list)->make();
+    }
+
+    public function getLocationViaPinCode(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'pin_code' => 'required',
         ]);
-        $data = $request->all();
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+        $dataObj = objFromPost(['pin_code']);
 
-        $data['status'] = 0;
-        if (!empty($request->status)) {
-            $data['status'] = 1;
+        $output = ['city' => '', 'state' => '', 'country' => '', 'city_id' => '', 'state_id' => '', 'country_id' => ''];
+
+        if ($result = \App\Models\PinCode::wherePinCode($dataObj->pin_code)->whereStatus(1)->first()) {
+            $output = [
+                'city' =>  $result->city_id ? \App\Models\City::whereId($result->city_id)->value('name') : '',
+                'state' =>  $result->state_id ? \App\Models\State::whereId($result->state_id)->value('name') : '',
+                'country' =>  $result->country_id ? \App\Models\Country::whereId($result->country_id)->value('name') : '',
+                'city_id' => $result->city_id,
+                'state_id' => $result->state_id,
+                'country_id' => $result->country_id,
+            ];
         }
 
-        State::create($data);
-        return redirect('/admin/state')->with('success','State created successfully.');
+        return response()->json($output);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function getCreate(Request $request)
     {
-        $state = State::findOrFail($id);
-        $states = State::all();
-        $countries = Country::whereStatus(1)->get();
-        return view('admin.state.edit', compact('state','countries','states'));
+        // \Can::access('pin_codes', 'create');
+
+        $countries = \App\Models\Country::select('id', 'name')
+            ->whereStatus(1)
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.state.create', compact('countries'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function postCreate(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'country_id' => 'required|integer',
-            'status' => 'nullable'
+        $validator = \Validator::make($request->all(), [
+            'name'=>"required",
+            'country' => 'required',
+            'status' => 'nullable|in:1,0',
         ]);
-        $state = State::findOrFail($id);
-        $data = $request->all();
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+        $dataObj = objFromPost(['name', 'country','status']);
 
-        $data['status'] = 0;
-        if (!empty($request->status)) {
-            $data['status'] = 1;
+        try {
+            $state = new \App\Models\State();
+            $state->name = $dataObj->name;
+            $state->country_id = $dataObj->country;
+            $state->status = (int)($dataObj->status == 1);
+            $state->save();
+
+            return response()->json(['message' => 'Your request processed successfully.']);
+        } catch (\Throwable $th) {
+            \Log::error($th);
+            return response()->json(['message' => 'Failed to process your request. Please try again later.'], 422);
+        }
+    }
+
+    public function getUpdate(Request $request)
+    {
+        // \Can::access('pin_codes', 'update');
+
+        $state = \App\Models\State::findOrFail($request->id);
+
+        $countries = \App\Models\Country::select('id', 'name')
+            ->whereStatus(1)
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.state.update', compact('state', 'countries'));
+    }
+
+    public function postUpdate(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'name'=>"required",
+            'country' => 'required',
+            'status' => 'nullable|in:1,0',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+        $dataObj = objFromPost(['name', 'country','status']);
+
+        try {
+            $state = \App\Models\State::find($request->id);
+            if (!blank($state)) {
+                $state->name = $dataObj->name;
+                $state->country_id = $dataObj->country;
+                $state->status = (int)($dataObj->status == 1);
+                $state->save();
+            }
+
+            return response()->json(['message' => 'Your request processed successfully.']);
+        } catch (\Throwable $th) {
+            \Log::error($th);
+            return response()->json(['message' => 'Failed to process your request. Please try again later.'], 422);
+        }
+    }
+
+    public function getDelete(Request $request)
+    {
+        // \Can::access('pin_codes', 'delete');
+
+        \App\Models\State::whereId($request->id)->delete();
+        return response()->json(['message' => 'Your request processed successfully.']);
+    }
+
+    public function getChangeStatus(Request $request)
+    {
+        // \Can::access('pin_codes', 'update');
+
+        $state = \App\Models\State::findOrFail($request->id);
+        if (!blank($state)) {
+            $state->status = (int)!$state->status;
+            $state->save();
         }
 
-        $state->update($data);
-        return redirect('/admin/state')->with('success','State updated successfully.');
+        return response()->json(['message' => 'Your request processed successfully.']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function getCsvImportSampleDownload(Request $request)
     {
-        $state = State::findOrFail($id);
-        $state->delete();
-        return redirect('/admin/state')->with('success', 'State has been deleted successfully.');
-    }
+        $headers = [
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename= State Sample File.csv",
+            'Expires' => '0',
+            'Pragma' => 'public',
+        ];
 
-    // Toggle
-    public function toggle(Request $request, $id)
-    {
-        $state = State::findOrFail($id);
-        if (!empty($request->status)) {
-            $state->update(['status'=>1]);
-        } else {
-            $state->update(['status'=>0]);
-        }
-        return redirect('/admin/state')->with('success', 'State has been upadted successfully.');
-    }
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Name', 'Country', 'Status']);
+            fputcsv($file, ['Delhi', 'India', '1']);
+            fclose($file);
+        };
 
-
-    public function upload()
-    {
-        return view('admin.state.upload');
+        return response()->stream($callback, 200, $headers);
     }
 
     public function import(Request $request)

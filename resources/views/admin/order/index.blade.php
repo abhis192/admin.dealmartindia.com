@@ -18,11 +18,11 @@
                     <h4 class="mb-sm-0 font-size-18">All Orders</h4>
 
                     <div class="page-title-right">
-                        <a href="{{route('admin.order.create')}}" class="btn btn-primary waves-effect waves-light"><i class="fas fa-plus"></i> Create Self Order</a>
-                        {{-- <ol class="breadcrumb m-0">
+                        {{-- <a href="{{route('admin.order.create')}}" class="btn btn-primary waves-effect waves-light"><i class="fas fa-plus"></i> Create Self Order</a> --}}
+                        <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                             <li class="breadcrumb-item active">All Orders</li>
-                        </ol> --}}
+                        </ol>
                     </div>
 
                 </div>

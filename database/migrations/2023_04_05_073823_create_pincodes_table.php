@@ -15,7 +15,7 @@ class CreatePincodesTable extends Migration
     {
         Schema::create('pincodes', function (Blueprint $table) {
             $table->id();
-            $table->string('pincode')->unique();
+            $table->string('name')->unique();
             $table->integer('city_id');
             // $table->integer('state_id')->nullable();
             // $table->integer('country_id')->nullable();

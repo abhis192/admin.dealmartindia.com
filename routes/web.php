@@ -267,13 +267,30 @@ Auth::routes(['verify' => true]);
         Route::post('country/toggle/{id}', [App\Http\Controllers\Admin\CountryController::class, 'toggle'])->name('country.toggle');
 
         // State
-        Route::get('state', [App\Http\Controllers\Admin\StateController::class, 'index'])->name('state');
-        Route::post('state/store', [App\Http\Controllers\Admin\StateController::class, 'store'])->name('state.store');
-        Route::get('state/{id}/edit', [App\Http\Controllers\Admin\StateController::class, 'edit'])->name('state.edit');
-        Route::patch('state/{id}', [App\Http\Controllers\Admin\StateController::class, 'update'])->name('state.update');
-        Route::get('state/destroy/{id}', [App\Http\Controllers\Admin\StateController::class, 'destroy'])->name('state.destroy');
-        Route::post('state/toggle/{id}', [App\Http\Controllers\Admin\StateController::class, 'toggle'])->name('state.toggle');
-        Route::get('state/upload', [App\Http\Controllers\Admin\StateController::class, 'upload'])->name('state.upload');
+        // Route::get('state', [App\Http\Controllers\Admin\StateController::class, 'index'])->name('state');
+        // Route::post('state/store', [App\Http\Controllers\Admin\StateController::class, 'store'])->name('state.store');
+        // Route::get('state/{id}/edit', [App\Http\Controllers\Admin\StateController::class, 'edit'])->name('state.edit');
+        // Route::patch('state/{id}', [App\Http\Controllers\Admin\StateController::class, 'update'])->name('state.update');
+        // Route::get('state/destroy/{id}', [App\Http\Controllers\Admin\StateController::class, 'destroy'])->name('state.destroy');
+        // Route::post('state/toggle/{id}', [App\Http\Controllers\Admin\StateController::class, 'toggle'])->name('state.toggle');
+        // Route::get('state/upload', [App\Http\Controllers\Admin\StateController::class, 'upload'])->name('state.upload');
+
+        // State New Way
+        // Area Routes
+        Route::get('state',[App\Http\Controllers\Admin\StateController::class, 'getIndex'])->name('state');
+        Route::get('state/list',[App\Http\Controllers\Admin\StateController::class, 'getList'])->name('state.list');
+        Route::get('state/create',[App\Http\Controllers\Admin\StateController::class, 'getCreate'])->name('state.create.index');
+        Route::post('state/create',[App\Http\Controllers\Admin\StateController::class, 'postCreate'])->name('state.create');
+        Route::get('state/update/{id?}',[App\Http\Controllers\Admin\StateController::class, 'getUpdate'])->name('state.update.index');
+        Route::post('state/update/{id?}',[App\Http\Controllers\Admin\StateController::class, 'postUpdate'])->name('state.update');
+        Route::get('state/delete/{id?}',[App\Http\Controllers\Admin\StateController::class, 'getDelete'])->name('state.delete');
+        Route::get('state/change/status/{id?}',[App\Http\Controllers\Admin\StateController::class, 'getChangeStatus'])->name('state.change.status');
+            //Area Imports
+        Route::get('state/import-csv/',[App\Http\Controllers\Admin\StateController::class, 'getCsvImport'])->name('state.import.csv.index');
+        Route::get('state/import-csv/download/sample',[App\Http\Controllers\Admin\StateController::class, 'getCsvImportSampleDownload'])->name('state.import.csv.download.sample');
+        Route::post('state/import-csv/',[App\Http\Controllers\Admin\StateController::class, 'postCsvImport'])->name('import.state.csv.process');
+        // Route::post('area/import-csv/',[App\Http\Controllers\Admin\AreaController::class, 'postCsvImport'])->name('area.import.csv.data');
+
 
         // City
         Route::get('city', [App\Http\Controllers\Admin\CityController::class, 'index'])->name('city');
@@ -302,7 +319,7 @@ Auth::routes(['verify' => true]);
         Route::post('area/update/{id?}',[App\Http\Controllers\Admin\AreaController::class, 'postUpdate'])->name('area.update');
         Route::get('area/delete/{id?}',[App\Http\Controllers\Admin\AreaController::class, 'getDelete'])->name('area.delete');
         Route::get('area/change/status/{id?}',[App\Http\Controllers\Admin\AreaController::class, 'getChangeStatus'])->name('area.change.status');
-            //Area Imports
+        //Area Imports
         Route::get('area/import-csv/',[App\Http\Controllers\Admin\AreaController::class, 'getCsvImport'])->name('area.import.csv.index');
         Route::get('area/import-csv/download/sample',[App\Http\Controllers\Admin\AreaController::class, 'getCsvImportSampleDownload'])->name('area.import.csv.download.sample');
         Route::post('area/import-csv/',[App\Http\Controllers\Admin\AreaController::class, 'postCsvImport'])->name('import.area.csv.process');

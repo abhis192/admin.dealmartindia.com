@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
         $numberOfTypes = \DB::table('types')->count();
         // $numberOfBrands = \DB::table('brands')->count();
         $numberOfCategories = \DB::table('categories')->count();
-        // $numberOfConfigShippings = \DB::table('config_shippings')->count();
+        $numberOfConfigShippings = \DB::table('config_shippings')->count();
 
         $numberOfPaymentGateways = \DB::table('payment_gateways')->count();
 
@@ -29,6 +29,11 @@ class UsersTableSeeder extends Seeder
         // $numberOfConfigRefunds = \DB::table('config_refunds')->count();
         $numberOfHomePages = \DB::table('home_pages')->count();
         $numberOfConfigPayouts = \DB::table('config_payouts')->count();
+
+        $numberOfCountries = \DB::table('countries')->count();
+        $numberOfStates = \DB::table('states')->count();
+        $numberOfCities = \DB::table('cities')->count();
+        $numberOfPincodes = \DB::table('pincodes')->count();
 
         // user
         if($numberOfUsers == 0) {
@@ -141,21 +146,22 @@ class UsersTableSeeder extends Seeder
         }
 
         // ConfigShippings
-        // if($numberOfConfigShippings == 0) {
-        //     DB::table('config_shippings')->insert([
-        //         'free_shipping_status' => 1,
-        //         'min_order_to_ship' => 499.00,
-        //         'universal_ship_status' => 1,
-        //         'universal_ship_cost' => 49.00,
-        //         'created_at' => carbon::now(),
-        //         'updated_at' => carbon::now()
-        //     ]);
-        // }
+        if($numberOfConfigShippings == 0) {
+            DB::table('config_shippings')->insert([
+                'free_shipping_status' => 1,
+                'min_order_to_ship' => 499.00,
+                'universal_ship_status' => 1,
+                'universal_ship_cost' => 49.00,
+                'universal_shipping_days'=> 1,
+                'created_at' => carbon::now(),
+                'updated_at' => carbon::now()
+            ]);
+        }
 
         // ConfigGeneral
         if($numberOfConfigGenerals == 0) {
             DB::table('config_generals')->insert([
-                'site_name' => 'Cake24x7',
+                'site_name' => 'DealMartIndia',
                 'site_email' => 'test@gmail.com',
                 'email' => 'test@gmail.com',
                 'mobile' => '8880008888',
@@ -230,6 +236,45 @@ class UsersTableSeeder extends Seeder
             DB::table('config_payouts')->insert([
                 'payout_status' => '1',
                 'payout_calculation_date' => '15',
+                'created_at' => carbon::now(),
+                'updated_at' => carbon::now()
+            ]);
+        }
+
+        if($numberOfCountries == 0) {
+            DB::table('countries')->insert([
+                'name' => 'India',
+                'status' => '1',
+                'created_at' => carbon::now(),
+                'updated_at' => carbon::now()
+            ]);
+        }
+
+        if($numberOfStates == 0) {
+            DB::table('states')->insert([
+                'name' => 'Uttar Pradesh',
+                'country_id' => '1',
+                'status' => '1',
+                'created_at' => carbon::now(),
+                'updated_at' => carbon::now()
+            ]);
+        }
+
+        if($numberOfCities == 0) {
+            DB::table('cities')->insert([
+                'name' => 'Noida',
+                'state_id' => '1',
+                'status' => '1',
+                'created_at' => carbon::now(),
+                'updated_at' => carbon::now()
+            ]);
+        }
+
+        if($numberOfPincodes == 0) {
+            DB::table('pincodes')->insert([
+                'name' => '201010',
+                'city_id' => '1',
+                'status' => '1',
                 'created_at' => carbon::now(),
                 'updated_at' => carbon::now()
             ]);

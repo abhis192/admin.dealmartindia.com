@@ -14,7 +14,6 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^4.0",
         "laravelcollective/html": "^6.4",
-        "livewire/livewire": "^2.10",
         "razorpay/razorpay": "^2.8",
         "spatie/laravel-permission": "^5.10",
         "stichoza/google-translate-php": "^5.1",

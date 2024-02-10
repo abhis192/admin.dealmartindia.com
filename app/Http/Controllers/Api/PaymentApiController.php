@@ -10,6 +10,24 @@ class PaymentApiController extends Controller
 {
      // show data of PaymentGateway table
    public function list($id=null){
-    return $id?PaymentGateway::find($id):PaymentGateway::whereStatus(1)->get();
+    $paymentgateway=PaymentGateway::whereStatus(1)->get();
+    if($paymentgateway){
+        $data['payment_gateway']= $paymentgateway;
+        $response = [
+            'success' => true,
+            'message' => 'Payment Gateway',
+            'data' => $data,
+        ];
+        return response()->json($response,200);
+   }else{
+    $response = [
+        'success' => true,
+        'message' => 'No Payment Gateway available',
+        'data' => '',
+    ];
+
+    return response()->json($response,200);
+   }
+
    }
 }

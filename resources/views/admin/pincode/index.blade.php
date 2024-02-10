@@ -106,7 +106,7 @@
                 buttons: DT_BUTTONS_OPTION,
 
                 columns: [
-                    { data: 'pincode' },
+                    { data: 'name' },
                     { data: 'city', name: 'cities.name' },
                     {
                         data: null,

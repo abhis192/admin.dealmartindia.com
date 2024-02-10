@@ -79,22 +79,18 @@ class PinCodeController extends Controller
     public function postCreate(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'pincode' => "required",
-            // 'country' => 'required',
-            // 'state' => 'required',
+            'name' => "required",
             'city' => 'required',
             'status' => 'nullable|in:1,0',
         ]);
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
-        $dataObj = objFromPost(['pincode','city','status']);
+        $dataObj = objFromPost(['name','city','status']);
 
         try {
             $pincode = new \App\Models\PinCode();
-            $pincode->pincode = $dataObj->pincode;
-            // $pincode->country_id = $dataObj->country;
-            // $pincode->state_id = $dataObj->state;
+            $pincode->name = $dataObj->name;
             $pincode->city_id = $dataObj->city;
             $pincode->status = (int)($dataObj->status == 1);
             $pincode->save();
@@ -123,23 +119,19 @@ class PinCodeController extends Controller
     public function postUpdate(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'pincode' => "required",
-            // 'country' => 'required',
-            // 'state' => 'required',
+            'name' => "required",
             'city' => 'required',
             'status' => 'nullable|in:1,0',
         ]);
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
-        $dataObj = objFromPost(['pincode','city', 'status']);
+        $dataObj = objFromPost(['name','city', 'status']);
 
         try {
             $pincode = \App\Models\PinCode::find($request->id);
             if (!blank($pincode)) {
-                $pincode->pincode = $dataObj->pincode;
-                // $pin_code->country_id = $dataObj->country;
-                // $pin_code->state_id = $dataObj->state;
+                $pincode->name = $dataObj->name;
                 $pincode->city_id = $dataObj->city;
                 $pincode->status = (int)($dataObj->status == 1);
                 $pincode->save();
@@ -187,7 +179,7 @@ class PinCodeController extends Controller
 
         $callback = function () {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Pincode', 'City','Description', 'Status']);
+            fputcsv($file, ['Name', 'City','Description', 'Status']);
             fputcsv($file, ['110044', 'delhi','', '1']);
             fclose($file);
         };
@@ -213,14 +205,14 @@ class PinCodeController extends Controller
                     if ($key != 0) {
                         // Perform validation for each row
                         $validation = Validator::make([
-                            'pincode' => $row[0],
+                            'name' => $row[0],
                             'city_id' => $row[1],
                             // 'state_id' => $row[2],
                             // 'country_id' => $row[3],
                             // 'description' => $row[2] ?? null,
                             // 'status' => $row[3],
                         ], [
-                            'pincode' => 'required|string|unique:pincodes',
+                            'name' => 'required|string|unique:pincodes',
                             'city_id' => 'required|exists:cities,name',
                             // 'description' => 'nullable|string',
                             // 'status' => 'nullable'
@@ -235,7 +227,7 @@ class PinCodeController extends Controller
 
                         // If validation passes, create and save a new Pincode
                         $pincode = new Pincode();
-                        $pincode->pincode = $row[0];
+                        $pincode->name = $row[0];
                         $pincode->city_id = City::where('name', $row[1])->first()->id ?? null;
                         // $pincode->state_id = State::where('name', $row[2])->first()->id ?? null;
                         // $pincode->country_id = Country::where('name', $row[3])->first()->id ?? null;
