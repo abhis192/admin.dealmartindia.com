@@ -43,7 +43,7 @@ Route::post('login/google', [App\Http\Controllers\Api\AuthController::class, 'lo
  //ProductController API
  Route::post('products', [App\Http\Controllers\Api\ProductController::class, 'list']);
  Route::post('productsByCity', [App\Http\Controllers\Api\ProductController::class, 'listBycity']);
- Route::get('productDetail/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productBySlug']);
+
 
  Route::post('related/products/{productId}', [App\Http\Controllers\Api\ProductController::class, 'relatedProducts']);
 
@@ -82,31 +82,25 @@ Route::post('deliveryOptionsBycity', [App\Http\Controllers\Api\DeliveryOptionApi
  //PincodeAPIController API
  Route::get('pincodes', [App\Http\Controllers\Api\PincodeApiController::class, 'list']);
  Route::post('checkPincode', [App\Http\Controllers\Api\PincodeApiController::class, 'check']);
+ Route::get('locations/{id}', [App\Http\Controllers\Api\PincodeApiController::class, 'location']);
 
  //AreaAPIController API
  Route::get('areas', [App\Http\Controllers\Api\AreaApiController::class, 'list']);
  Route::get('locations', [App\Http\Controllers\Api\AreaApiController::class, 'locations']);
- Route::get('locations/{id}', [App\Http\Controllers\Api\AreaApiController::class, 'location']);
+//  Route::get('locations/{id}', [App\Http\Controllers\Api\AreaApiController::class, 'location']);
 
 //TestimonialAPIController API
 Route::get('testimonials', [App\Http\Controllers\Api\TestimonialApiController::class, 'list']);
 
-//ReviewAPIController API
-Route::get('reviews', [App\Http\Controllers\Api\ReviewApiController::class, 'list']);
-Route::post('review/store', [App\Http\Controllers\Api\ReviewApiController::class, 'store']);
-Route::get('reviewByProduct/{id}', [App\Http\Controllers\Api\ReviewApiController::class, 'reviewByProductId']);
-
  //BulkPriceAPIController API
- Route::get('bulk-prices', [App\Http\Controllers\Api\BulkPriceApiController::class, 'list']);
- Route::get('pricingByCityId/{cityId}', [App\Http\Controllers\Api\BulkPriceApiController::class, 'pricingByCityId']);
+//  Route::get('bulk-prices', [App\Http\Controllers\Api\BulkPriceApiController::class, 'list']);
+//  Route::get('pricingByCityId/{cityId}', [App\Http\Controllers\Api\BulkPriceApiController::class, 'pricingByCityId']);
 
 //BannerAPIController API
 Route::get('banners', [App\Http\Controllers\Api\BannerApiController::class, 'list']);
 
 //ConfigurationAPIController API
 Route::get('settings', [App\Http\Controllers\Api\ConfigurationApiController::class, 'list']);
-
-
 
 //PageAPIController API
 Route::get('pages', [App\Http\Controllers\Api\PageApiController::class, 'list']);
@@ -141,10 +135,6 @@ Route::middleware('auth:sanctum')->group( function () {
     //PaymentAPIController API
     Route::get('paymentGateways', [App\Http\Controllers\Api\PaymentApiController::class, 'list']);
 
-     //BulkPriceAPIController API
-    //  Route::get('bulk-prices', [App\Http\Controllers\Api\BulkPriceApiController::class, 'list']);
-    //  Route::get('pricingByCityId/{cityId}', [App\Http\Controllers\Api\BulkPriceApiController::class, 'pricingByCityId']);
-
     //WishlistAPIController API
     Route::get('wishlists', [App\Http\Controllers\Api\WishlistApiController::class, 'list']);
     Route::post('wishlist/add/{productId}', [App\Http\Controllers\Api\WishlistApiController::class, 'wishlistAdd']);
@@ -167,21 +157,15 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('user/cartitems', [App\Http\Controllers\Api\CartController::class, 'cartItems']);
     Route::delete('user/clear/cart', [App\Http\Controllers\Api\CartController::class, 'clearCart']);
 
-    // Add on
-    // Route::post('product/addonsByCity', [App\Http\Controllers\Api\ProductController::class, 'addonlistByCity']);
-    // Product
-    Route::post('user/productDetailByCity/{slug}', [App\Http\Controllers\Api\BulkPriceApiController::class, 'productDetailByCity']);
+    Route::post('user/productDetailByCity/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productDetailByCity']);
 
     // coupon
     Route::post('applyCoupon', [App\Http\Controllers\Api\CouponController::class, 'applyCoupon']);
+
+    Route::get('productDetail/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productBySlug']);
+
+    //ReviewAPIController API
+    Route::get('reviews', [App\Http\Controllers\Api\ReviewApiController::class, 'list']);
+    Route::post('review/store', [App\Http\Controllers\Api\ReviewApiController::class, 'store']);
+    Route::get('reviewByProduct/{id}', [App\Http\Controllers\Api\ReviewApiController::class, 'reviewByProductId']);
 });
-
-Route::post('productDetailByCity/{slug}', [App\Http\Controllers\Api\BulkPriceApiController::class, 'productDetailByCity']);
-// Guest user routes
-Route::post('guest/add/cart', [App\Http\Controllers\Api\CartController::class, 'addcartGuest']);
-Route::post('guest/cart/items', [App\Http\Controllers\Api\CartController::class, 'cartGuest']);
-Route::post('guest/update/cart/{id}', [App\Http\Controllers\Api\CartController::class, 'updateCartGuest']);
-Route::post('guest/cart/delete/{id}', [App\Http\Controllers\Api\CartController::class, 'destroyCartGuest']);
-
-Route::post('guest/cartitems', [App\Http\Controllers\Api\CartController::class, 'cartItemsGuest']);
-Route::post('guest/clear/cart', [App\Http\Controllers\Api\CartController::class, 'clearCartGuest']);

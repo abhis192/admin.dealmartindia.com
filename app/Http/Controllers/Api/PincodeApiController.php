@@ -16,7 +16,7 @@ class PincodeApiController extends Controller
    public function check(Request $request) {
 
     if(Pincode::whereStatus(1)->whereName($request->get('pincode'))->count()) {
-        if (Pincode::whereStatus(1)->wherePincode($request->get('pincode'))->whereCityId($request->get('city_id'))->count()) {
+        if (Pincode::whereStatus(1)->whereName($request->get('pincode'))->whereCityId($request->get('city_id'))->count()) {
             $pincode = Pincode::whereStatus(1)->whereName($request->get('pincode'))->whereCityId($request->get('city_id'))->get();
             $response = [
                 'success' => true,
@@ -44,4 +44,35 @@ class PincodeApiController extends Controller
 
 
    }
+
+     // show data of pincode table
+     public function location($id){
+
+     $resp = Pincode::where('status', 1)->whereName($id)
+     ->with(['city' => function ($query) {
+        $query->where('status', 1)
+            ->with('state');
+     }])
+     ->get();
+
+     if($resp->count()>0){
+        $data['location'] = $resp;
+
+        $response = [
+            'message' => 'location',
+            'success' => true,
+            'data' => $data,
+        ];
+
+        return response()->json($response,200);
+     }else{
+        $response = [
+            'message' => 'not available',
+            'success' => false,
+            'data' => '',
+        ];
+
+        return response()->json($response,200);
+    }
+}
 }

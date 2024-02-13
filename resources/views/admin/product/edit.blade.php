@@ -911,7 +911,7 @@
                                                 <td><input type="text" name="final_price[]" value="{{ $idval->final_price}}" class="form-control"  readonly/></td>
 
                                                 <td class="d-none1">
-                                                @if($key=='0')
+                                                @if($loop->last)
                                                 <button type="button" class="btn has-ripple btn-success btn-add"><i class="bx bx-plus"></i></button>
                                                 @else
                                                 <but-ton type="button" class="btn has-ripple btn-success btn-danger btn-remove"><i class="bx bx-minus"></i></button>

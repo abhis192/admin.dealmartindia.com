@@ -17,16 +17,29 @@ class WishlistApiController extends Controller
     public function list() {
         $user = auth()->user()->id;
         $wishlists = Wishlist::whereUserId($user)->with('user:id,name', 'product','product.tags','product.type:id,name','product.categories.category:id,name','product.prices','product.gallery','product.reviews')
-        ->paginate(10);
+        ->get();
 
-        // foreach ($wishlists as $key => $wishlist) {
-            // $wishlists[$key]['product']['image'] = '/storage/product/' . $wishlists['product']['image'];
-        // }
+        if($wishlists->count()>0){
+            $data['wishlists'] = $wishlists;
 
+            $response = [
+                'success' => true,
+                'message' => 'wishlist list',
+                'data' => $data,
+            ];
 
-        return response()->json($wishlists);
-    }
+            return response()->json($response,200);
+        }else{
+        $response = [
+            'success' => true,
+            'message' => 'Wishlist empty',
+            'data' => '',
+        ];
 
+        return response()->json($response,200);
+
+     }
+}
     //store review
     public function store(Request $request)
     {
@@ -45,21 +58,26 @@ class WishlistApiController extends Controller
             DB::beginTransaction();
             try{
              Wishlist::create($data);
-             $response=[
-                'message'=>'wishlist added successfully',
-                'status'=>1
-               ];
-               $respCode=200;
              DB::commit();
+             $response = [
+                'success' => true,
+                'message' => 'product added successfully',
+                'data' => $data,
+            ];
+
+            return response()->json($response,200);
+
             }catch(\Exception $e){
                 DB::rollBack();
-                $response=[
-                    'message'=>'Internal Server Error',
-                    'status'=>0
-                   ];
-                   $respCode=500;
+                   $response = [
+                    'success' => false,
+                    'message' => 'Internal Server Error',
+                    'data' => '',
+                ];
+
+                return response()->json($response,200);
             }
-            return response()->json($response,$respCode);
+            // return response()->json($response,$respCode);
         }
     }
 
@@ -68,31 +86,37 @@ class WishlistApiController extends Controller
         //
         $wishlists=Wishlist::find($id);
         if(is_null($wishlists)){
-            $response=[
-                'message'=>'wishlist does not exists',
-                'status'=>0
+            $response = [
+                'success' => false,
+                'message' => 'wishlist empty',
+                'data' => '',
             ];
-            $respCode=404;
+
+            return response()->json($response,200);
         }else{
             DB::beginTransaction();
             try{
                $wishlists->delete();
                DB::Commit();
-               $response=[
-                'message'=>'wishlist deleted successfully',
-                'status'=>1
-               ];
-               $respCode=200;
+               $response = [
+                'success' => true,
+                'message' => 'wishlist deleted successfully',
+                'data' => '',
+            ];
+
+            return response()->json($response,200);
             }catch(\Exception $err){
                 DB::rollBack();
-                $response=[
-                    'message'=>'Internal Serve Error',
-                    'status'=>0
-                   ];
-                   $respCode=500;
+                $response = [
+                    'success' => true,
+                    'message' => 'Internal Server Error',
+                    'data' => '',
+                ];
+
+                return response()->json($response,200);
             }
         }
-        return response()->json($response,$respCode);
+        // return response()->json($response,$respCode);
     }
 
     public function wishlistMoveToCart($id) {
@@ -111,8 +135,13 @@ class WishlistApiController extends Controller
                 // return redirect()->route('wishlist')->with('failure','Already added in the Cart.');
             }
         }
-        // return redirect()->route('wishlist')->with('success','Moved into Cart Successfully.');
-        return response()->json(['success' => 'Moved into Cart Successfully.'], 200);
+        $response = [
+            'success' => true,
+            'message' => 'Moved into Cart Successfully',
+            'data' => '',
+        ];
+
+        return response()->json($response,200);
     }
 
 

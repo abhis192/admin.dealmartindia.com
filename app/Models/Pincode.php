@@ -30,8 +30,4 @@ class Pincode extends Model
     {
         return $this->belongsToMany(Product::class, 'product_pincodes');
     }
-    // public function usermappings()
-    // {
-    //     return $this->hasMany('App\Models\UserMapping');
-    // }
 }
