@@ -28,303 +28,174 @@ class AuthController extends Controller
     public function generateOtp(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'number' => 'required|digits:10', // Assuming the number is a 10-digit phone number
+            'mobile' => 'required|digits:10', // Assuming the number is a 10-digit phone number
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->messages()], 400);
         }
-
-        $phoneNumber = $request->input('number');
-
+        $phoneNumber = $request->input('mobile');
         // Check if a user with the provided phone number exists
         $user = User::whereMobile($phoneNumber)->first();
         $otp = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
 
         if ($user) {
             // User exists, update the OTP and its expiry timestamp in the user's record
-            // send email to user
-            // if (!empty($user->email)) {
-            //     Mail::to($user->email)->send(new OtpNotification($otp));
-            // }
             $user->otp = $otp;
             $user->otp_expiry = now()->addMinutes(15); // OTP expires in 15 minutes
             $user->save();
+
+            $data['mobile']=$user->mobile;
+            $data['otp']=$otp;
+            $response = [
+                'success' => true,
+                'message' => 'OTP generated successfully',
+                'data' => $data,
+            ];
+
+            return response()->json($response,200);
+
         } else {
-            // User does not exist, create a new user and generate OTP
-            $user = new User();
-            $user->name = 'user';
-            // $user->email = $phoneNumber;
-            $user->mobile = $phoneNumber;
-            $user->password = Hash::make('test1234');
-            $user->otp = $otp;
-            $user->otp_expiry = now()->addMinutes(15); // OTP expires in 15 minutes
-            $user->save();
+
+            $validatedData = Validator::make($request->all(), [
+                'mobile' => 'required|digits:10',
+            ])->validate();
+
+            // Check if a record with the given email and mobile exists
+            $userVerify = DB::table('user_verifies')
+                ->where('mobile', $validatedData['mobile'])
+                ->first();
+
+            // If a record exists, update the OTP and expiry time
+            if ($userVerify) {
+                $otp = sprintf('%04d', rand(0, 9999));
+                DB::table('user_verifies')
+                    // ->where('email', $validatedData['email'])
+                    ->where('mobile', $validatedData['mobile'])
+                    ->update([
+                        'otp' => $otp,
+                        'otp_expiry' => now()->addMinutes(20),
+                    ]);
+
+                // You can now send the updated OTP to the user through a preferred method (e.g., email, SMS)
+                // return response()->json(['message' => 'OTP updated successfully', 'otp' => $otp], 200);
+                $data['otp']=$otp;
+                $response = [
+                    'success' => true,
+                    'data' => $data,
+                    'message' => 'OTP sent successfully'
+                ];
+
+                return response()->json($response,200);
+            }
+
+            // If no record exists, create a new one
+            $otp = sprintf('%04d', rand(0, 9999));
+            DB::table('user_verifies')->insert([
+                'mobile' => $validatedData['mobile'],
+                'otp' => $otp,
+                'otp_expiry' => now()->addMinutes(config('otp.expiry_minutes')),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // return response()->json(['message' => 'OTP generated successfully', 'otp' => $otp], 200);
+            $data['mobile']=$validatedData['mobile'];
+            $data['otp']=$otp;
+            $response = [
+                'success' => true,
+                'message' => 'OTP generated successfully',
+                'data' => $data,
+            ];
+
+            return response()->json($response,200);
+
+            // You can send the OTP to the user through SMS, email, or any other method here
+
         }
 
-
-        $success['OTP'] = $otp;
-
-        $response = [
-            'success' => true,
-            'message' => 'OTP sent successfully',
-            'data' => $success,
-            // 'message' => 'User registered successfully'
-        ];
-
-        return response()->json($response, 200);
-
-        // You can send the OTP to the user through SMS, email, or any other method here
     }
 
-    //verify-otp
+    //verify otp
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'input' => 'required', // Assuming the number is a 10-digit phone number
-            'otp' => 'required|digits:4', // Assuming the OTP is a 4-digit code
+            'input' => 'required',
+            'otp' => 'required|digits:4',
         ]);
 
-        $user = User::where('mobile', $request->input)->orWhere('email',$request->input)->first();
+        // Check if the user exists in the users table
+        $user = User::where('mobile', $request->input)->orWhere('email', $request->input)->first();
 
-        if ($user) {
-            // Check if the provided OTP matches the stored OTP and it's not expired
-            if ($user->otp === $request->otp && now()->lt($user->otp_expiry)) {
-                // Clear the OTP fields as it's now verified
-                $user->otp = null;
-                $user->otp_expiry = null;
-                $user->save();
+        if (!$user) {
+            // Check if the user exists in the user_verifies table
+            $userVerify = DB::table('user_verifies')
+                ->where('mobile', $request->input)
+                // ->orWhere('email', $request->input)
+                ->first();
 
-                // Use the standard Laravel Passport login logic to generate a token
-                $token = $user->createToken('MyApp')->plainTextToken;
+            if ($userVerify && $userVerify->otp === $request->otp) {
+                // If OTP matches and not expired, create a new user and delete the entry
+                $user = User::create([
+                    'name' => 'user',
+                    // 'email' => $userVerify->email,
+                    'mobile' => $userVerify->mobile,
+                    'otp' => $request->otp,
+                    // 'password' => Hash::make('test1234'),
+                    // Add any additional fields you want to copy from user_verifies to users
+                ]);
 
-                Mail::to(configGeneral()->email)->send(new NewRegistrationEmail($user));
-
-                $success['token'] = $token;
-                $success['name'] = $user->name;
-
-                $response = [
-                    'success' => true,
-                    'message' => 'User login successfully',
-                    'data' => $success,
-                ];
-                return response()->json($response, 200);
-
+                // Delete the entry from user_verifies
+                DB::table('user_verifies')->where('id', $userVerify->id)->delete();
             } else {
-
+                // return response()->json(['success' => false, 'message' => 'Invalid OTP or user not found'], 422);
                 $response = [
                     'success' => false,
-                    'message' => 'Invalid OTP',
+                    'message' => 'Invalid OTP or user not found',
                     'data' => '',
                 ];
-
-                return response()->json($response, 200);
+                return response()->json($response,200);
             }
-        } else {
+        }
+
+        // Check if the provided OTP matches the stored OTP and it's not expired
+        if ($user->otp === $request->otp) {
+            // Clear the OTP fields as it's now verified
+            $user->otp = null;
+            $user->otp_expiry = null;
+            $user->save();
+
+            // Use the standard Laravel Passport login logic to generate a token
+            $token = $user->createToken('MyApp')->plainTextToken;
+
+            // if ($request->has('session_id')) {
+            //     $this->updateCartUserId($user->id, $request->session_id);
+            // }
+            Mail::to(configGeneral()->email)->send(new NewRegistrationEmail($user));
+
+            $data['name'] = $user->name;
+            $data['mobile'] = $user->mobile;
+            $data['token'] = $token;
 
             $response = [
+                'success' => true,
+                'message' => 'User login successfully',
+                'data' => $data,
+            ];
+            return response()->json($response,200);
+
+        } else {
+            // return response()->json(['success' => false, 'message' => 'Invalid OTP'], 422);
+            $response = [
                 'success' => false,
-                'message' => 'User not found',
+                'message' => 'Invalid OTP',
                 'data' => '',
             ];
-
-            return response()->json($response, 200);
+            return response()->json($response,200);
         }
     }
 
-
-    //login-with-password
-    // public function login(Request $request)
-    // {
-    //     if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-    //             $user=Auth::user();
-
-    //             if ($request->has('session_id')) {
-    //                 $this->updateCartUserId($user->id, $request->session_id);
-    //             }
-
-    //             $success['token']=$user->createToken('MyApp')->plainTextToken;
-    //             $success['name']=$user->name;
-
-    //            $response=[
-    //             'success'=>true,
-    //             'data'=>$success,
-    //             'message'=>'User login successfully'
-    //            ];
-
-    //            return response()->json($response,200);
-    //     }else{
-    //         $response=[
-    //             'success'=>false,
-    //             'message'=>'Your email or password is incorrect'
-    //         ];
-    //         return response()->json($response,200);
-    //     }
-    // }
-
-    //login with otp
-    // public function loginWithOtp(Request $request) {
-    //     $validator = Validator::make($request->all(), [
-    //         'input' => 'required',
-    //         'session_id' => 'nullable',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json($validator->messages(), 200);
-    //     }
-
-    //     $input = $request->input('input');
-    //     $user = User::where('email', $input)->orWhere('mobile', $input)->first();
-
-    //     // if ($request->has('session_id')) {
-    //     //     $this->updateCartUserId($user->id, $request->session_id);
-    //     // }
-
-    //     if ($user) {
-    //         // Never use this in otp generating, use this after otp verified successfully
-    //         // if ($request->has('session_id')) {
-    //         //     $this->updateCartUserId($user->id, $request->session_id);
-    //         // }
-
-    //         // User exists, send OTP through email or mobile based on the input
-    //         $via = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
-    //         $otp = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
-
-    //         // Send OTP through email or mobile here (use $via to determine the method)
-    //         if (!empty($user->email)) {
-    //             Mail::to($user->email)->send(new OtpNotification($otp));
-    //         }
-    //         $user->otp = $otp;
-    //         $user->otp_expiry = now()->addMinutes(15); // OTP expires in 15 minutes
-    //         $user->save();
-
-
-    //         $data['OTP'] = $otp;
-    //         $data['input'] =$request->input('input');
-
-    //         // User does not exist, redirect to the register page
-    //         $isEmail = filter_var($input, FILTER_VALIDATE_EMAIL) ? true : false;
-
-    //         $response = [
-    //             'success' => true,
-    //             'isRegister' => true,
-    //             'isEmail'=>$isEmail,
-    //             'data' => $data,
-    //             'message' => 'OTP sent successfully'
-    //         ];
-
-    //         return response()->json($response,200);
-
-    //          // User does not exist, redirect to the register page
-    //         //  $isEmail = filter_var($input, FILTER_VALIDATE_EMAIL) ? true : false;
-    //         // return response()->json(['success' => true, 'isRegister' => true, 'isEmail'=>$isEmail, 'input' => $request->input('input'), 'message'=>'OTP sent successfully'],200);
-
-
-    //     } else {
-    //         // User does not exist, redirect to the register page
-    //         // $isEmail = filter_var($input, FILTER_VALIDATE_EMAIL) ? true : false;
-    //         // return response()->json(['success' => false, 'isRegister' => false, 'input' => $request->input('input'), 'isEmail' => $isEmail], 200);
-
-
-    //         $data['input'] =$request->input('input');
-
-    //         // User does not exist, redirect to the register page
-    //         $isEmail = filter_var($input, FILTER_VALIDATE_EMAIL) ? true : false;
-
-    //         $response = [
-    //             'success' => false,
-    //             'isRegister' => false,
-    //             'isEmail'=>$isEmail,
-    //             'data' => $data,
-    //             'message' => 'Need to registered first'
-    //         ];
-
-    //         return response()->json($response,200);
-    //     }
-    // }
-
-    //register with otp
-    // public function registerWithOtp(Request $request) {
-    //     $validator = Validator::make($request->all(), [
-    //         // 'input' => 'required',
-    //         // 'name' => 'required',
-    //         'email' => 'required',
-    //         'session_id' => 'nullable',
-
-    //         'name' => 'required|string|min:3|max:255',
-    //         'mobile' => 'required|unique:users',
-    //         'email' => 'required|unique:users',
-    //         // 'password' => ['required', 'confirmed'],
-    //         // 'password_confirmation' => ['required'],
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         // return response()->json($validator->messages(), 200);
-    //         //  $msg=$validator->messages();
-    //         $response = [
-    //             'success' => false,
-    //             // 'data' => '',
-    //             'message' => 'Email or mobile already taken'
-    //         ];
-    //         return response()->json($response, 200);
-    //     }
-
-    //     // $user = new User();
-    //     // $user->name = 'user';
-    //     // // $user->email = 'vikas.abhisan@gmail.com';
-    //     // $user->mobile = '8193054955';
-    //     // // $user->otp_expiry = now()->addMinutes(15); // OTP expires in 15 minutes
-    //     // $user->save();
-
-    //     $data = $request->all();
-    //     // Check if 'session_id' exists in the request
-
-    //      // Check if 'session_id' exists in the request
-    //      if ($request->has('session_id')) {
-    //         $user = $this->createWithCart($data, $request->get('session_id'));
-    //     } else {
-    //         $user = User::create($data);
-    //     }
-
-    //     // $user = User::create($data);
-
-    //     // $input = $request->input('input');
-    //     // $name = $request->input('name');
-    //     $user = User::where('email', $user->email)->orWhere('mobile', $user->mobile)->where('name',$user->name)->first();
-
-    //     if ($user) {
-    //         // User exists, send OTP through email or mobile based on the input
-    //         // $via = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
-    //         $otp = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
-
-    //         // Send OTP through email or mobile here (use $via to determine the method)
-    //         if (!empty($user->email)) {
-    //             Mail::to($user->email)->send(new OtpNotification($otp));
-    //         }
-    //         $user->otp = $otp;
-    //         $user->otp_expiry = now()->addMinutes(15); // OTP expires in 15 minutes
-    //         $user->save();
-
-
-    //         // $success['token'] = $user->createToken('MyApp')->plainTextToken;
-    //         $success['OTP'] = $otp;
-
-    //         $response = [
-    //             'success' => true,
-    //             'data' => $success,
-    //             // 'message' => 'User registered successfully'
-    //             'message' => 'OTP sent successfully'
-    //         ];
-
-    //         return response()->json($response, 200);
-
-    //         // return response()->json(['message' => 'OTP sent successfully', 'OTP' => $otp], 200);
-    //     } else {
-    //         // User does not exist, redirect to the register page
-    //         return response()->json(['message' => 'Not Registered user first'], 200);
-    //     }
-    // }
-
+    //update profile
     public function updateProfile(Request $request, string $id)
     {
         $validator=Validator::make($request->all(),[
@@ -396,6 +267,7 @@ class AuthController extends Controller
         }
     }
 
+    //logout user
     public function logout(){
             auth()->user()->tokens()->delete();
             return response(['message'=>'user logout successfully']);

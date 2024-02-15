@@ -15,7 +15,7 @@ class CreateUserVerifiesTable extends Migration
     {
         Schema::create('user_verifies', function (Blueprint $table) {
             $table->id();
-            $table->string('input')->unique();
+            $table->string('mobile')->unique();
             $table->string('otp')->nullable();
             $table->timestamp('otp_expiry')->nullable();
             $table->timestamps();

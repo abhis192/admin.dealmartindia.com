@@ -26,8 +26,8 @@ use Illuminate\Support\Facades\Route;
 //AuthController //RegisterCustomer
 // Route::post('register', [App\Http\Controllers\Api\AuthController::class, 'register']);
 Route::post('login', [App\Http\Controllers\Api\AuthController::class, 'login']);
-Route::post('login-with-otp', [App\Http\Controllers\Api\AuthController::class, 'loginWithOtp']);
-Route::post('register-with-otp', [App\Http\Controllers\Api\AuthController::class, 'registerWithOtp']);
+// Route::post('login-with-otp', [App\Http\Controllers\Api\AuthController::class, 'loginWithOtp']);
+// Route::post('register-with-otp', [App\Http\Controllers\Api\AuthController::class, 'registerWithOtp']);
 
 Route::post('generate-otp', [App\Http\Controllers\Api\AuthController::class, 'generateOtp']);
 Route::post('otp-login', [App\Http\Controllers\Api\AuthController::class, 'verifyOtp']);
