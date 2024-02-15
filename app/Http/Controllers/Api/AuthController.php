@@ -14,6 +14,7 @@ use App\Mail\OtpNotification;
 use Mail;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Validation\Rule;
+use Carbon\carbon;
 use App\Mail\NewRegistrationEmail;
 
 class AuthController extends Controller
@@ -140,6 +141,7 @@ class AuthController extends Controller
                     'name' => 'user',
                     // 'email' => $userVerify->email,
                     'mobile' => $userVerify->mobile,
+                    'email_verified_at' => Carbon::now(),
                     'otp' => $request->otp,
                     // 'password' => Hash::make('test1234'),
                     // Add any additional fields you want to copy from user_verifies to users
