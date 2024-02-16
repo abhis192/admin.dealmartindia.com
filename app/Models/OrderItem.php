@@ -10,7 +10,7 @@ class OrderItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_id','seller_id','product_id','product_name','qty_type','qty_weight','qty','price','tax','discount_type','discount','coupon_discount','refund_status','image','eggless','heart_shape','photo_cake','msg_cake','cake_flavour'
+        'order_id','seller_id','product_id','product_name','qty_type','qty_weight','qty','sale_price','tax','discount_type','discount','coupon_discount','refund_status','image'
     ];
 
     public function orderItemAttributes()

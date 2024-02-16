@@ -20,10 +20,12 @@ class CreateCartsTable extends Migration
             $table->integer('qty')->nullable();
             $table->string('qty_type')->nullable();
             $table->integer('qty_weight')->nullable();
-            $table->integer('eggless')->nullable();
-            $table->integer('heart_shape')->nullable();
-            $table->string('photo_cake')->nullable();
-            $table->string('msg_cake')->nullable();
+            // $table->integer('product_price')->nullable();
+            $table->integer('regular_price')->nullable();
+            $table->string('discount_type')->nullable();
+            $table->string('discount_value')->nullable();
+            // $table->string('final_price')->nullable();
+            $table->string('sale_price')->nullable();
             $table->timestamps();
         });
     }

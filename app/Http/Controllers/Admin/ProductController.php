@@ -119,35 +119,6 @@ class ProductController extends Controller
                 $data['in_stock'] = 1;
             }
 
-            $data['addon'] = 0;
-            if (!empty($request->addon)) {
-                $data['addon'] = 1;
-            }
-
-            $data['eggless'] = 0;
-            if (!empty($request->eggless)) {
-                $data['eggless'] = 1;
-            }
-            $data['photo_cake'] = 0;
-            if (!empty($request->photo_cake)) {
-                $data['photo_cake'] = 1;
-            }
-
-            $data['message'] = 0;
-            if (!empty($request->message)) {
-                $data['message'] = 1;
-            }
-
-            $data['cake_flavour'] = 0;
-            if (!empty($request->message)) {
-                $data['cake_flavour'] = 1;
-            }
-
-            $data['heart_shape'] = 0;
-            if (!empty($request->heart_shape)) {
-                $data['heart_shape'] = 1;
-            }
-
             $data['is_refundable'] = 0;
             if (!empty($request->is_refundable)) {
                 $data['is_refundable'] = 1;
@@ -171,18 +142,18 @@ class ProductController extends Controller
 
             foreach ($request->qty_type as $key => $val) {
                 if ($request->discount_type[$key] == 'Flat') {
-                    $final_price = $request->product_price[$key] - $request->discount_value[$key];
+                    $sale_price = $request->regular_price[$key] - $request->discount_value[$key];
                 } else {
-                    $get_value = $request->discount_value[$key] * $request->product_price[$key] / 100;
-                    $final_price = $request->product_price[$key] - $get_value;
+                    $get_value = $request->discount_value[$key] * $request->regular_price[$key] / 100;
+                    $sale_price = $request->regular_price[$key] - $get_value;
                 }
                 $priceData['product_id'] = $product->id;
                 $priceData['qty_type'] = $val;
                 $priceData['qty_weight'] = $request->qty_weight[$key];
-                $priceData['product_price'] = $request->product_price[$key];
+                $priceData['regular_price'] = $request->regular_price[$key];
                 $priceData['discount_type'] = $request->discount_type[$key];
                 $priceData['discount_value'] = $request->discount_value[$key];
-                $priceData['final_price'] = $final_price;
+                $priceData['sale_price'] = $sale_price;
                 $productPrice = ProductPrice::create($priceData);
 
             }
@@ -332,20 +303,20 @@ class ProductController extends Controller
         $product->getprice->each->delete();
         foreach ($request->qty_type as $key => $val) {
             if ($request->discount_type[$key] == 'Flat') {
-                $final_price = $request->product_price[$key] - $request->discount_value[$key];
+                $sale_price = $request->regular_price[$key] - $request->discount_value[$key];
             } else {
-                $get_value = $request->discount_value[$key] * $request->product_price[$key] / 100;
-                $final_price = $request->product_price[$key] - $get_value;
+                $get_value = $request->discount_value[$key] * $request->regular_price[$key] / 100;
+                $sale_price = $request->regular_price[$key] - $get_value;
             }
 
             // $priceData['product_id'] = $product->id;
             $priceData['product_id'] = $product->id;
             $priceData['qty_type'] = $val;
             $priceData['qty_weight'] = $request->qty_weight[$key];
-            $priceData['product_price'] = $request->product_price[$key];
+            $priceData['regular_price'] = $request->regular_price[$key];
             $priceData['discount_type'] = $request->discount_type[$key];
             $priceData['discount_value'] = $request->discount_value[$key];
-            $priceData['final_price'] = $final_price;
+            $priceData['sale_price'] = $sale_price;
             $productPrice = ProductPrice::create($priceData);
 
         }

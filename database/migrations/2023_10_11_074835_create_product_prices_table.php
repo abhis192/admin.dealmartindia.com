@@ -16,10 +16,12 @@ return new class extends Migration
             $table->integer('product_id')->nullable();
             $table->string('qty_type')->nullable();
             $table->integer('qty_weight')->nullable();
-            $table->string('product_price')->nullable();
+            // $table->string('product_price')->nullable();
+            $table->double('regular_price')->nullable();
             $table->string('discount_type')->nullable();
             $table->string('discount_value')->nullable();
-            $table->string('final_price')->nullable();
+            // $table->string('final_price')->nullable();
+            $table->double('sale_price')->nullable();
             $table->timestamps();
         });
     }

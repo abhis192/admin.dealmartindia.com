@@ -22,18 +22,13 @@ class CreateOrderItemsTable extends Migration
             $table->string('qty_type')->nullable();
             $table->string('qty_weight')->nullable();
             $table->integer('qty');
-            $table->double('price',10,2);
+            $table->double('sale_price',10,2);
             // $table->double('tax',10,2)->nullable();
             $table->double('discount_type',10,2)->nullable();
             $table->double('discount',10,2)->nullable();
             $table->double('coupon_discount',10,2)->nullable();
             // $table->tinyInteger('refund_status')->default(0)->nullable()->comment('');
             $table->string('image')->default('default.jpg');
-            $table->integer('eggless')->nullable();
-            $table->integer('heart_shape')->nullable();
-            $table->string('photo_cake')->nullable();
-            $table->string('msg_cake')->nullable();
-            $table->string('cake_flavour')->nullable();
             $table->timestamps();
         });
     }

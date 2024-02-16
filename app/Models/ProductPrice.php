@@ -10,6 +10,6 @@ class ProductPrice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id', 'qty_type','qty_weight','product_price','discount_type','discount_value','final_price'
+        'product_id', 'qty_type','qty_weight','regular_price','discount_type','discount_value','sale_price'
     ];
 }

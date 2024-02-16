@@ -33,12 +33,6 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('published')->default(0);
             $table->tinyInteger('featured')->default(0);
             $table->integer('in_stock')->default(0)->nullable();
-            $table->tinyInteger('addon')->default(0);
-            $table->tinyInteger('eggless')->default(0);
-            $table->string('photo_cake')->default(0)->nullable();
-            $table->string('message')->default(0)->nullable();
-            $table->string('cake_flavour')->default(0)->nullable();
-            $table->tinyInteger('heart_shape')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

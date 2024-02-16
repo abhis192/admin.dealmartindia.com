@@ -10,7 +10,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_no','seller_id','source','user_id','order_address_id','delivery_id','date','order_status','order_mode','shipping_rate','commission_rate','coupon_id','transaction_id'
+        'order_no','seller_id','user_id','order_address_id','delivery_id','order_status','order_mode','shipping_rate','commission_rate','coupon_id','transaction_id'
     ];
 
     // protected $total_discount = ['total_discount'];

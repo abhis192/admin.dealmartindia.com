@@ -104,18 +104,6 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- <div class="col-lg-12">
-                                                            <div class="form-group">
-                                                                <label for="name" class="form-label fw-bold">Slug <sup class="text-danger fs-5">*</sup> :</label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-text">https://cake24x7.com/product/</div>
-                                                                    <input type="text" class="form-control" id="slug" />
-                                                                </div>
-                                                                <div class="valid-feedback">Looks good!</div>
-                                                                <div class="invalid-feedback">This field is required. </div>
-                                                            </div>
-                                                        </div> --}}
-
                                                         <div class="col-lg-12">
                                                             <div class="form-group">
                                                                 <label for="name" class="form-label fw-bold">Slug <sup class="text-danger fs-5">*</sup> :</label>
@@ -132,21 +120,6 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-
-
-                                                        {{-- <div class="col-lg-12">
-                                                            <div class="form-group">
-                                                                <label for="name" class="form-label fw-bold">Product Category<sup class="text-danger fs-5">*</sup> :</label>
-                                                                <select class="form-control select2 select2-multiple" multiple="multiple" data-placeholder="Choose Category..." >
-                                                                    <option value="1">All Category</option>
-                                                                    <option value="2">Category 1</option>
-                                                                    <option value="3">Category 2</option>
-                                                                    <option value="4">Category 3</option>
-                                                                </select>
-                                                                <div class="valid-feedback">Looks good!</div>
-                                                                <div class="invalid-feedback">This field is required. </div>
-                                                            </div>
-                                                        </div> --}}
 
                                                         <div class="col-lg-6">
                                                             <div class="form-group">
@@ -237,11 +210,6 @@
                                                                         <option value="{{$tag->tag}}" >{{$tag->tag}}</option>
                                                                         {{-- <option value="{{$slot->id}}" {{ $slot->id == $deliveryoption->time_slot_inside ? "selected" : "" }}>{{$slot->from}}-{{$slot->to}}</option> --}}
                                                                         @endforeach
-
-
-                                                                    {{-- <option value="Tag 1">Tag 1</option>
-                                                                    <option value="Tag 2">Tag 2</option>
-                                                                    <option value="Tag 3">Tag 3</option> --}}
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -264,17 +232,6 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
-
-                                                        {{-- <div class="col-lg-12">
-                                                            <div class="form-group d-flex justify-content-between align-items-center">
-                                                                <label for="name" class="form-label fw-bold">Published :</label>
-                                                                <div class="square-switch">
-                                                                    <input type="checkbox" id="square-switch1" switch="status" checked/>
-                                                                    <label for="square-switch1" data-on-label="Yes"
-                                                                        data-off-label="No"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> --}}
                                                         <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Published :</label>
@@ -290,17 +247,6 @@
                                                                 @enderror
                                                             </div>
                                                         </div>
-
-                                                        {{-- <div class="col-lg-12">
-                                                            <div class="form-group d-flex justify-content-between align-items-center">
-                                                                <label for="name" class="form-label fw-bold">Featured :</label>
-                                                                <div class="square-switch">
-                                                                    <input type="checkbox" id="square-switch2" switch="status" />
-                                                                    <label for="square-switch2" data-on-label="Yes"
-                                                                        data-off-label="No"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> --}}
                                                         <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Featured :</label>
@@ -316,17 +262,6 @@
                                                                 @enderror
                                                             </div>
                                                         </div>
-
-                                                        {{-- <div class="col-lg-12">
-                                                            <div class="form-group d-flex justify-content-between align-items-center">
-                                                                <label for="name" class="form-label fw-bold">In Stock :</label>
-                                                                <div class="square-switch">
-                                                                    <input type="checkbox" id="square-switch3" switch="status" checked/>
-                                                                    <label for="square-switch3" data-on-label="Yes"
-                                                                        data-off-label="No"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> --}}
                                                         <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">In Stock :</label>
@@ -347,16 +282,6 @@
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Make it Addon :</label>
                                                                 <div class="square-switch">
-                                                                    <input type="checkbox" id="square-switch8" switch="status" />
-                                                                    <label for="square-switch8" data-on-label="Yes"
-                                                                        data-off-label="No"></label>
-                                                                </div>
-                                                            </div>
-                                                        </div> --}}
-                                                        <div class="col-lg-12">
-                                                            <div class="form-group d-flex justify-content-between align-items-center">
-                                                                <label for="name" class="form-label fw-bold">Make it Addon :</label>
-                                                                <div class="square-switch">
                                                                     <input type="checkbox" id="square-switch4" name="addon" switch="status"/>
                                                                     <label for="square-switch4" data-on-label="Yes"
                                                                         data-off-label="No"></label>
@@ -367,9 +292,9 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Eggless :</label>
                                                                 <div class="square-switch">
@@ -378,9 +303,9 @@
                                                                         data-off-label="No"></label>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Is this a Photo Cake? :</label>
                                                                 <div class="square-switch">
@@ -389,9 +314,9 @@
                                                                         data-off-label="No"></label>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Message on Cake :</label>
                                                                 <div class="square-switch">
@@ -400,9 +325,9 @@
                                                                         data-off-label="No"></label>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="cake_flavour" class="form-label fw-bold">Cake Flavour :</label>
                                                                 <div class="square-switch">
@@ -411,10 +336,10 @@
                                                                         data-off-label="No"></label>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Heart Shape :</label>
                                                                 <div class="square-switch">
@@ -423,7 +348,7 @@
                                                                         data-off-label="No"></label>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                     </div>
                                                 </div>
@@ -564,7 +489,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input type="text" name="product_price[]" class="form-control" Placeholder="Eg: 100, 200, 500..." />
+                                                                    <input type="text" name="regular_price[]" class="form-control" Placeholder="Eg: 100, 200, 500..." />
                                                                     <div class="valid-feedback">Looks good!</div>
                                                                     <div class="invalid-feedback">This field is required. </div>
                                                                 </td>
@@ -586,7 +511,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input type="text" name="final_price[]" class="form-control"  readonly/>
+                                                                    <input type="text" name="sale_price[]" class="form-control"  readonly/>
                                                                     <div class="valid-feedback">Looks good!</div>
                                                                     <div class="invalid-feedback">This field is required. </div>
                                                                 </td>

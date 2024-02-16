@@ -27,10 +27,17 @@ class OrderController extends Controller
     // show data of type table
     public function index() {
         $user = auth()->user();
-        $orders = Order::whereUserId($user->id)->latest()->with('seller','user','OrderItems','orderAddress','delivery')
-            ->paginate(10);
+        $orders = Order::whereUserId($user->id)->latest()->with('seller','user','OrderItems','orderAddress')
+            ->get();
 
-        return response()->json($orders);
+        $data['orders']=$orders;
+
+        $response = [
+            'success' => true,
+            'message' => 'Order List',
+            'data' => $data,
+        ];
+        return response()->json($response,200);
     }
 
     public function placeOrder(Request $request)
@@ -42,7 +49,7 @@ class OrderController extends Controller
             'order_items.*.product_id' => 'required|exists:products,id', // Make sure each product exists
             'order_items.*.qty' => 'required|numeric|min:1',
             // Add more validation rules as needed
-            'order_deliveries' => 'required|array|min:1',
+            // 'order_deliveries' => 'required|array|min:1',
             'order_statuses' => 'required|array|min:1',
             // Add validation rules for deliveries and statuses
         ]);
@@ -56,21 +63,22 @@ class OrderController extends Controller
 
         try {
             // start [order_deliveries]
-            $delivery = OrderDelivery::create([
-                'delivery_date' => $request->get('order_deliveries')[0]['delivery_date'],
-                'delivery_type' =>$request->get('order_deliveries')[0]['delivery_type'],
-                'delivery_time' =>$request->get('order_deliveries')[0]['delivery_time'],
-            ]);
+            // $delivery = OrderDelivery::create([
+            //     'delivery_date' => $request->get('order_deliveries')[0]['delivery_date'],
+            //     'delivery_type' =>$request->get('order_deliveries')[0]['delivery_type'],
+            //     'delivery_time' =>$request->get('order_deliveries')[0]['delivery_time'],
+            // ]);
 
             $user_address = UserAddress::findOrFail($request->get('order_address_id'));
             if($user_address) {
                 $order_address = OrderAddress::create([
+                    'label' => $user_address['label'],
                     'name' => $user_address['name'],
                     'email' => $user_address['email'],
                     'mobile' =>$user_address['mobile'],
                     'address' =>$user_address['address'],
                     'pincode' =>$user_address['pincode'],
-                    'area' =>$user_address['area']??null,
+                    // 'area' =>$user_address['area']??null,
                     'landmark' =>$user_address['landmark'],
                     'country' =>$user_address['country'],
                     'state' =>$user_address['state'],
@@ -82,15 +90,16 @@ class OrderController extends Controller
             $order = Order::create([
                 // 'user_id' => $request->input('user_id'),
                 'user_id' => auth()->user()->id,
-                'source' => $request->input('source'),
+                // 'source' => $request->input('source'),
                 'order_no' => Carbon::now()->format('dmY').'-'.mt_rand(11111,99999),
                 // 'date' => Carbon::now(),
-                'delivery_id' =>$delivery->id,
+                // 'delivery_id' =>$delivery->id,
                 'order_address_id' =>$order_address->id,
                 // 'order_address_id' =>$request->input('order_address_id'),
                 'order_status' => 'Pending',
                 'shipping_rate' =>$request->input('shipping_rate'),
                 'order_mode' =>$request->input('order_mode'),
+                'coupon_id' =>$request->input('coupon_id'),
                 'transaction_id' =>$request->input('transaction_id'),
                 // Add other fields as needed
             ]);
@@ -103,12 +112,12 @@ class OrderController extends Controller
                     'qty' => $item['qty'],
                     // 'seller_id' => $item['seller_id'],
                     // 'seller_id' => $request->seller_id,
-                    'price' => $item['price'],
-                    'eggless'=>$item['eggless'],
-                    'heart_shape'=>$item['heart_shape'],
-                    'photo_cake'=>$item['photo_cake'],
-                    'msg_cake'=>$item['msg_cake'],
-                    'cake_flavour'=>$item['cake_flavour'],
+                    'sale_price' => $item['sale_price'],
+                    // 'eggless'=>$item['eggless'],
+                    // 'heart_shape'=>$item['heart_shape'],
+                    // 'photo_cake'=>$item['photo_cake'],
+                    // 'msg_cake'=>$item['msg_cake'],
+                    // 'cake_flavour'=>$item['cake_flavour'],
                     'qty_weight'=>$item['qty_weight'],
                     'qty_type'=>$item['qty_type'],
                     'discount_type'=>$item['discount_type'],
@@ -119,15 +128,15 @@ class OrderController extends Controller
                 ]);
 // dd('order_items');
                 // You can also handle order attributes associated with each item here
-                if (isset($item['attributes'])) {
-                    foreach ($item['attributes'] as $attribute) {
-                        OrderAttribute::create([
-                            'order_item_id' => $orderItem->id,
-                            'name' => $attribute['name'],
-                            'value' => $attribute['value'],
-                        ]);
-                    }
-                }
+                // if (isset($item['attributes'])) {
+                //     foreach ($item['attributes'] as $attribute) {
+                //         OrderAttribute::create([
+                //             'order_item_id' => $orderItem->id,
+                //             'name' => $attribute['name'],
+                //             'value' => $attribute['value'],
+                //         ]);
+                //     }
+                // }
             }
 
             // Loop through order statuses and create records
@@ -152,10 +161,26 @@ class OrderController extends Controller
              Mail::to($order->address->email)->send(new OrderConfirmationEmail($order));
              Mail::to(configGeneral()->email)->send(new OrderConfirmationEmail($order));
 
-            return response()->json(['message' => 'Order placed successfully', 'order_id' => $order->id], 201);
+            // return response()->json(['message' => 'Order placed successfully', 'order_id' => $order->id], 201);
+             $data['order_id']=$order->id;
+
+            $response = [
+                'success' => true,
+                'message' => 'Order placed successfully',
+                'data' => $data,
+            ];
+            return response()->json($response,200);
+
         } catch (\Exception $e) {
             // DB::rollback();
-            return response()->json(['error' => 'Order placement failed',$e], 500);
+            // return response()->json(['error' => '',$e], 500);
+
+            $response = [
+                'success' => false,
+                'message' => 'Order placement failed',
+                'data' => '',
+            ];
+            return response()->json($response,200);
         }
     }
 
@@ -165,12 +190,24 @@ class OrderController extends Controller
         $order = Order::findOrFail($orderId);
 
         if (auth()->user()->id != $order->user_id) {
-            return response()->json(['error' => 'Unauthorized'], 200);
+            // return response()->json(['error' => 'Unauthorized'], 200);
+            $response = [
+                'success' => false,
+                'message' => 'Unauthorized',
+                'data' => '',
+            ];
+            return response()->json($response,200);
         }
 
         // Check if the order exists
         if (!$order) {
-            return response()->json(['error' => 'Order not found'], 200);
+            // return response()->json(['error' => 'Order not found'], 200);
+            $response = [
+                'success' => false,
+                'message' => 'Order not found',
+                'data' => '',
+            ];
+            return response()->json($response,200);
         }
         // Main order cancel
         $order->update(['order_status' => 'Cancelled']);
@@ -188,21 +225,26 @@ class OrderController extends Controller
         OrderStatus::create($data);
 
         // Respond with a success message
-        return response()->json(['message' => 'Order cancelled successfully'], 200);
+        // return response()->json(['message' => 'Order cancelled successfully'], 200);
+        $response = [
+            'success' => true,
+            'message' => 'Order cancelled successfully',
+            'data' => '',
+        ];
+        return response()->json($response,200);
     }
-
 
     // show data of type table
     public function showOrder($orderId)
     {
-        $order = Order::with(['orderAddress', 'orderDeliveryOption', 'statuses', 'OrderItems.review', 'OrderItems.Product'])->findOrFail($orderId);
+        $order = Order::with(['orderAddress', 'statuses', 'OrderItems.review', 'OrderItems.Product'])->findOrFail($orderId);
 
         $subtotal = 0;
         $totalbag = 0;
         $offer_discount = 0;
         $coupon_discount = 0;
-        $heart_shape = 0;
-        $eggless = 0;
+        // $heart_shape = 0;
+        // $eggless = 0;
         $grand_total = 0;
         foreach ($order->OrderItems as $item) {
 
@@ -216,8 +258,8 @@ class OrderController extends Controller
             $totalbag = $totalbag + ($item->price)*($item->qty) + ($cal_discount_value)*($item->qty);
             $offer_discount = $offer_discount + ($cal_discount_value)*($item->qty);
             $coupon_discount = $coupon_discount + ($item->coupon_discount)*($item->qty);
-            $heart_shape = $heart_shape + ($item->heart_shape)*($item->qty);
-            $eggless = $eggless + ($item->eggless)*($item->qty);
+            // $heart_shape = $heart_shape + ($item->heart_shape)*($item->qty);
+            // $eggless = $eggless + ($item->eggless)*($item->qty);
 
             // round off according requirement
             // $overallRating = $item->review->avg('stars') ?? null;
@@ -232,29 +274,19 @@ class OrderController extends Controller
         $order['subtotal'] = $subtotal;
         $order['offer_discount'] = $offer_discount;
         $order['coupon_discount'] = $coupon_discount;
-        $order['heart_shape'] = $heart_shape;
-        $order['eggless'] = $eggless;
-        $order['grand_total'] = round($totalbag - $offer_discount - $coupon_discount + $heart_shape + $eggless + $order['shipping_rate'], 0);
+        // $order['heart_shape'] = $heart_shape;
+        // $order['eggless'] = $eggless;
+        $order['grand_total'] = round($totalbag - $offer_discount - $coupon_discount + $order['shipping_rate'], 0);
 
-        return response()->json($order);
+        // return response()->json($order);
+
+        $data['order_details'] = $order;
+
+        $response = [
+            'success' => true,
+            'message' => 'order detail',
+            'data' => $data,
+        ];
+        return response()->json($response,200);
     }
-
-
-
-    // public function cancel($id)
-    // {
-    //     $order = Order::findOrFail($id);
-    //     $order->update(['order_status'=>'Cancelled']);
-
-    //     $data['order_id'] = $order->id;
-    //     $data['comment'] = 'Cancelled';
-    //     $data['order_status'] = 'Cancelled';
-    //     $data['updated_by'] = Auth::user()->id;
-
-    //     if($order->order_mode == 'ONLINE'){ $paymentStatus = 'paid'; }
-    //     $paymentStatus = $paymentStatus??'unpaid';
-    //     $data['payment_status'] = $paymentStatus;
-    //     OrderStatus::create($data);
-    //     return redirect()->route('customer.dashboard')->with('success','Order status updated successfully.');
-    // }
 }

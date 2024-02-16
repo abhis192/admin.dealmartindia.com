@@ -16,11 +16,11 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_no');
-            $table->string('source');
+            // $table->string('source');
             $table->string('user_id')->nullable();
             $table->integer('order_address_id')->nullable();
             $table->integer('delivery_id')->nullable();
-            $table->date('date');
+            // $table->date('date');
             $table->string('order_status')->comment('In Progress, Cancelled, Completed, Confirmed');
             $table->string('order_mode')->nullable()->comment('Cash On Delivery, Online Pay');
             $table->double('shipping_rate',10,2)->nullable();

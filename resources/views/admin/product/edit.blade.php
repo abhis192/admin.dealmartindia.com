@@ -503,7 +503,7 @@
                                                                 </div>
                                                             </div>
                                                         </div> --}}
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Make it Addon :</label>
                                                                 <div class="square-switch">
@@ -517,9 +517,9 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Eggless :</label>
                                                                 <div class="square-switch">
@@ -533,7 +533,7 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                         {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
@@ -546,7 +546,7 @@
                                                             </div>
                                                         </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Is this a Photo Cake? :</label>
                                                                 <div class="square-switch">
@@ -560,7 +560,7 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                         {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
@@ -573,7 +573,7 @@
                                                             </div>
                                                         </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Message on Cake :</label>
                                                                 <div class="square-switch">
@@ -587,10 +587,10 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="cake_flavour" class="form-label fw-bold">Cake Flavour :</label>
                                                                 <div class="square-switch">
@@ -604,7 +604,7 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
 
                                                         {{-- <div class="col-lg-12">
@@ -618,7 +618,7 @@
                                                             </div>
                                                         </div> --}}
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <div class="form-group d-flex justify-content-between align-items-center">
                                                                 <label for="name" class="form-label fw-bold">Heart Shape :</label>
                                                                 <div class="square-switch">
@@ -632,7 +632,7 @@
                                                                     </div>
                                                                 @enderror
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                     </div>
                                                 </div>
@@ -751,7 +751,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input type="text" name="product_price[]" class="form-control" Placeholder="Eg: 100, 200, 500..." />
+                                                                    <input type="text" name="regular_price[]" class="form-control" Placeholder="Eg: 100, 200, 500..." />
                                                                     <div class="valid-feedback">Looks good!</div>
                                                                     <div class="invalid-feedback">This field is required. </div>
                                                                 </td>
@@ -773,7 +773,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input type="text" name="final_price[]" class="form-control"  readonly/>
+                                                                    <input type="text" name="sale_price[]" class="form-control"  readonly/>
                                                                     <div class="valid-feedback">Looks good!</div>
                                                                     <div class="invalid-feedback">This field is required. </div>
                                                                 </td>
@@ -896,7 +896,7 @@
 
 
 
-                                                <td><input type="text" name="product_price[]" value="{{ $idval->product_price}}" class="form-control" Placeholder="Eg: 100, 200, 500..." /></td>
+                                                <td><input type="text" name="regular_price[]" value="{{ $idval->regular_price}}" class="form-control" Placeholder="Eg: 100, 200, 500..." /></td>
 
                                                 <td>
                                                     <select name="discount_type[]" class="form-control">
@@ -908,7 +908,7 @@
 
                                                 <td><input type="text" name="discount_value[]" value="{{ $idval->discount_value}}" class="form-control" Placeholder="Eg: 100, 200, 500..." /></td>
 
-                                                <td><input type="text" name="final_price[]" value="{{ $idval->final_price}}" class="form-control"  readonly/></td>
+                                                <td><input type="text" name="sale_price[]" value="{{ $idval->sale_price}}" class="form-control"  readonly/></td>
 
                                                 <td class="d-none1">
                                                 @if($loop->last)
@@ -934,7 +934,7 @@
                                                 </td>
                                                 <td class="d-none"><input type="text" name="qty[]" class="form-control form-control-sm" Placeholder="Eg: 100, 200, 500..." /></td>
                                                 <td class="d-none"><input type="text" name="business_value[]" class="form-control form-control-sm" Placeholder="Eg: 1, 10, 20, 30, 50..." /></td>
-                                                <td> <input type="text" name="product_price[]" class="form-control form-control-sm" Placeholder="Eg: 100, 200, 500..." /></td>
+                                                <td> <input type="text" name="regular_price[]" class="form-control form-control-sm" Placeholder="Eg: 100, 200, 500..." /></td>
                                                 <td>
                                                     <select name="discount_type[]" class="form-control form-control-sm">
                                                         <option value="">Discount Type</option>
@@ -943,7 +943,7 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="text" name="discount_value[]" class="form-control form-control-sm" Placeholder="Eg: 100, 200, 500..." /></td>
-                                                <td class="d-none"><input type="text" name="final_price[]" class="form-control form-control-sm"  readonly/></td>
+                                                <td class="d-none"><input type="text" name="sale_price[]" class="form-control form-control-sm"  readonly/></td>
                                                 <td class="d-none"><button type="button" class="btn has-ripple btn-success btn-add"><i class="feather icon-plus"></i></button></td>
                                             </tr>
 

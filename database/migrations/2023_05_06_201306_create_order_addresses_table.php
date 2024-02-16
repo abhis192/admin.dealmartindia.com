@@ -23,7 +23,7 @@ class CreateOrderAddressesTable extends Migration
             $table->longText('address');
             $table->longText('landmark')->nullable();
             $table->string('pincode');
-            $table->string('area');
+            // $table->string('area');
             $table->string('city');
             $table->string('state');
             $table->string('country');

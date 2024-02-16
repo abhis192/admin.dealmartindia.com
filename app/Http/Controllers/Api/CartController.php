@@ -97,10 +97,16 @@ class CartController extends Controller
 
             $carts=Cart::find($id);
             if(is_null($carts)){
-                return response()->json([
-                    'message'=>'cart empty',
-                    'status'=>0
-                ], 404 );
+                // return response()->json([
+                //     'message'=>'',
+                //     'status'=>0
+                // ], 404 );
+                $response = [
+                    'success' => true,
+                    'message' => 'cart empty',
+                    'data' => '',
+                ];
+                return response()->json($response,200);
             }else{
                 DB::beginTransaction();
                 try{
@@ -123,66 +129,32 @@ class CartController extends Controller
                 }
 
                 if(is_null($carts)){
-                    return response()->json([
-                        'message'=>'Internal Server Error',
-                        'status'=>0,
-                        'error_msg'=>$err->getMessage(),
-                    ], 500 );
+                    // return response()->json([
+                    //     'message'=>'',
+                    //     'status'=>0,
+                    //     'error_msg'=>$err->getMessage(),
+                    // ], 500 );
+                    $response = [
+                        'success' => true,
+                        'message' => 'Internal Server Error',
+                        'data' => '',
+                    ];
+                    return response()->json($response,200);
+
                 }else{
-                    return response()->json([
-                        'message'=>'Cart Updated Successfully',
-                        'status'=>1
-                    ], 200 );
+                    // return response()->json([
+                    //     'message'=>'',
+                    //     'status'=>1
+                    // ], 200 );
+                    $response = [
+                        'success' => true,
+                        'message' => 'Cart Updated Successfully',
+                        'data' => '',
+                    ];
+                    return response()->json($response,200);
                 }
             }
         }
-
-        // else
-        // $sessionId = session()->getId();
-
-        // $carts=Cart::find($id);
-        // if(is_null($carts)){
-        //     return response()->json([
-        //         'message'=>'cart empty',
-        //         'status'=>0
-        //     ], 404 );
-        // }else{
-        //     DB::beginTransaction();
-        //     try{
-
-        //         // $useraddress=$request->all();
-        //         $carts->user_id=$sessionId;
-        //         $carts->product_id=$request['product_id'];
-        //         $carts->qty=$request['qty'];
-        //         $carts->qty_type=$request['qty_type'];
-        //         $carts->qty_weight=$request['qty_weight'];
-        //         $carts->eggless=$request['eggless'];
-        //         $carts->heart_shape=$request['heart_shape'];
-        //         $carts->photo_cake=$request['photo_cake'];
-        //         $carts->msg_cake=$request['msg_cake'];
-
-        //         $carts->save();
-
-        //         DB::commit();
-        //     }catch(\Exception $err){
-        //         DB::rollBack();
-        //         $carts=null;
-        //     }
-        //    if(is_null($carts)){
-        //     return response()->json([
-        //         'message'=>'Internal Server Error',
-        //         'status'=>0,
-        //         'error_msg'=>$err->getMessage(),
-        //     ], 500 );
-        //    }else{
-        //         return response()->json([
-        //             'message'=>'Cart Updated Successfully',
-        //             'status'=>1
-        //         ], 200 );
-        //    }
-
-        // }
-
     }
 
     //delete cart for auth user --check first
@@ -192,111 +164,52 @@ class CartController extends Controller
         if (auth()->check()){
             $carts=Cart::find($id);
             if(is_null($carts)){
-                $response=[
-                    'message'=>'cart does not exists',
-                    'status'=>0
+                // $response=[
+                //     'message'=>'',
+                //     'status'=>0
+                // ];
+                // $respCode=404;
+                $response = [
+                    'success' => true,
+                    'message' => 'cart does not exists',
+                    'data' => '',
                 ];
-                $respCode=404;
+                return response()->json($response,200);
             }else{
                 DB::beginTransaction();
                 try{
                 $carts->delete();
                 DB::Commit();
-                $response=[
-                    'message'=>'cart deleted successfully',
-                    'status'=>1
+                // $response=[
+                //     'message'=>'',
+                //     'status'=>1
+                // ];
+                // $respCode=200;
+                $response = [
+                    'success' => true,
+                    'message' => 'cart deleted successfully',
+                    'data' => '',
                 ];
-                $respCode=200;
+                return response()->json($response,200);
+
                 }catch(\Exception $err){
                     DB::rollBack();
-                    $response=[
-                        'message'=>'Internal Serve Error',
-                        'status'=>0
+                    // $response=[
+                    //     'message'=>'',
+                    //     'status'=>0
+                    // ];
+                    // $respCode=500;
+                    $response = [
+                        'success' => true,
+                        'message' => 'Internal Serve Error',
+                        'data' => '',
                     ];
-                    $respCode=500;
+                    return response()->json($response,200);
                 }
             }
-            return response()->json($response,$respCode);
-        }
-
-        // else
-        // $carts=Cart::find($id);
-        // if(is_null($carts)){
-        //     $response=[
-        //         'message'=>'cart does not exists',
-        //         'status'=>0
-        //     ];
-        //     $respCode=404;
-        // }else{
-        //     DB::beginTransaction();
-        //     try{
-        //     $carts->delete();
-        //     DB::Commit();
-        //     $response=[
-        //         'message'=>'cart deleted successfully',
-        //         'status'=>1
-        //     ];
-        //     $respCode=200;
-        //     }catch(\Exception $err){
-        //         DB::rollBack();
-        //         $response=[
-        //             'message'=>'Internal Serve Error',
-        //             'status'=>0
-        //         ];
-        //         $respCode=500;
-        //     }
-        // }
-        // return response()->json($response,$respCode);
-
-    }
-
-
-
-    // Other methods...
-
-    // Separate methods for authenticated and guest users
-    protected function cartAuthenticated(Request $request)
-    {
-        $userId = auth()->id();
-        // Implement your logic for authenticated user's cart
-        return response()->json(['message' => 'Authenticated user cart operation', 'user_id' => $userId]);
-    }
-
-    protected function addcartAuthenticated(Request $request)
-    {
-        $userId = auth()->id();
-        // Implement your logic for authenticated user's addcart
-        return response()->json(['message' => 'Authenticated user addcart operation', 'user_id' => $userId]);
-    }
-
-    // Other methods...
-
-    // Example of another method
-    public function someOtherMethod(Request $request)
-    {
-        if (auth()->check()) {
-            // Authenticated user logic
-            return $this->someOtherMethodAuthenticated($request);
-        } else {
-            // Guest user logic
-            return $this->someOtherMethodGuest($request);
+            // return response()->json($response,$respCode);
         }
     }
-
-    protected function someOtherMethodAuthenticated(Request $request)
-    {
-        $userId = auth()->id();
-        // Implement your logic for authenticated user's other method
-        return response()->json(['message' => 'Authenticated user someOtherMethod', 'user_id' => $userId]);
-    }
-
-    protected function someOtherMethodGuest(Request $request)
-    {
-        $sessionId = session()->getId();
-        // Implement your logic for guest user's other method
-        return response()->json(['message' => 'Guest user someOtherMethod', 'session_id' => $sessionId]);
-    }
-
 
     //cartitems for auth user
     public function cartItems(Request $request)
@@ -315,26 +228,26 @@ class CartController extends Controller
                 $totalbag = 0;
                 $offer_discount = 0;
                 // $coupon_discount = 0;
-                $heart_shape = 0;
-                $eggless = 0;
+                // $heart_shape = 0;
+                // $eggless = 0;
                 $grand_total = 0;
                 // $cal_dicount_value=0;
                 foreach ($cart as $key=> $item) {
 
                     if($item->discount_type=='Percentage'){
-                        $cal_discount_value=((($item->discount_value)/100)*($item->product_price));
+                        $cal_discount_value=((($item->discount_value)/100)*($item->regular_price));
                     }else{
                         $cal_discount_value= $item->discount_value;
                     }
 
-                    $subtotal = $subtotal + ($item->final_price)*($item->qty);
-                    $totalbag = $totalbag + ($item->product_price)*($item->qty);
-                    // $totalbag = $totalbag + ($item->product_price)*($item->qty) + ($cal_discount_value)*($item->qty);
+                    $subtotal = $subtotal + ($item->sale_price)*($item->qty);
+                    $totalbag = $totalbag + ($item->regular_price)*($item->qty);
+                    // $totalbag = $totalbag + ($item->regular_price)*($item->qty) + ($cal_discount_value)*($item->qty);
                     $offer_discount = $offer_discount + ($cal_discount_value)*($item->qty);
 
                     // $coupon_discount = $coupon_discount + ($item->coupon_discount)*($item->qty);
-                    $heart_shape = $heart_shape + ($item->heart_shape)*($item->qty);
-                    $eggless = $eggless + ($item->eggless)*($item->qty);
+                    // $heart_shape = $heart_shape + ($item->heart_shape)*($item->qty);
+                    // $eggless = $eggless + ($item->eggless)*($item->qty);
 
                     if(!empty($item['product_id'])){
                     $item['product_name']=$item['product']['name'];
@@ -345,9 +258,9 @@ class CartController extends Controller
                 $cartcalculation['offer_discount'] = $offer_discount;
                 $cartcalculation['subtotal'] = $subtotal;
                 // $order['coupon_discount'] = $coupon_discount;
-                $cartcalculation['heart_shape'] = $heart_shape;
-                $cartcalculation['eggless'] = $eggless;
-                $cartcalculation['grand_total'] = round($totalbag - $offer_discount + $heart_shape + $eggless, 2);
+                // $cartcalculation['heart_shape'] = $heart_shape;
+                // $cartcalculation['eggless'] = $eggless;
+                $cartcalculation['grand_total'] = round($totalbag - $offer_discount, 2);
 
 
                 $data['cart_calculation'] = $cartcalculation;
@@ -433,13 +346,13 @@ class CartController extends Controller
             foreach ($cart as $key=> $item) {
 
                 if($item->discount_type=='Percentage'){
-                    $cal_discount_value=((($item->discount_value)/100)*($item->product_price));
+                    $cal_discount_value=((($item->discount_value)/100)*($item->regular_price));
                 }else{
                     $cal_discount_value= $item->discount_value;
                 }
 
-                $subtotal = $subtotal + ($item->final_price)*($item->qty);
-                $totalbag = $totalbag + ($item->product_price)*($item->qty);
+                $subtotal = $subtotal + ($item->sale_price)*($item->qty);
+                $totalbag = $totalbag + ($item->regular_price)*($item->qty);
                 $offer_discount = $offer_discount + ($cal_discount_value)*($item->qty);
                 // $coupon_discount = $coupon_discount + ($item->coupon_discount)*($item->qty);
                 $heart_shape = $heart_shape + ($item->heart_shape)*($item->qty);

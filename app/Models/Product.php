@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'slug', 'category_id','type_id','brand_id','sku','description', 'user_id', 'meta_title', 'meta_keywords', 'meta_description','published','featured','eggless','regular_price','sale_price','image','shipping_days','published','featured','eggless','in_stock','addon','photo_cake','message','cake_flavour','heart_shape'
+        'name', 'slug', 'category_id','type_id','brand_id','sku','description', 'user_id', 'meta_title', 'meta_keywords', 'meta_description','published','featured','image','shipping_days','published','featured','in_stock'
     ];
 
     protected $appends = ['min_price','rating','review_count'];
@@ -93,7 +93,7 @@ class Product extends Model
     }
 
     public function getMinPriceAttribute() {
-        $minPrice = $this->prices->min('final_price');
+        $minPrice = $this->prices->min('sale_price');
         return $minPrice;
     }
 

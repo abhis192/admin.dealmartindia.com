@@ -44,27 +44,27 @@ class ProductController extends Controller
             switch ($priceRange) {
                 case '499 and below':
                     $query->whereHas('prices', function ($priceQ) {
-                        $priceQ->where('final_price', '<=', 499);
+                        $priceQ->where('sale_price', '<=', 499);
                     });
                     break;
                 case '500-999':
                     $query->whereHas('prices', function ($priceQ) {
-                        $priceQ->where('final_price', '>=', 500)->where('final_price', '<=', 999);
+                        $priceQ->where('sale_price', '>=', 500)->where('sale_price', '<=', 999);
                     });
                     break;
                 case '1000-1500':
                     $query->whereHas('prices', function ($priceQ) {
-                        $priceQ->where('final_price', '>=', 1000)->where('final_price', '<=', 1500);
+                        $priceQ->where('sale_price', '>=', 1000)->where('sale_price', '<=', 1500);
                     });
                     break;
                 case '1500-2500':
                     $query->whereHas('prices', function ($priceQ) {
-                        $priceQ->where('final_price', '>=', 1500)->where('final_price', '<=', 2500);
+                        $priceQ->where('sale_price', '>=', 1500)->where('sale_price', '<=', 2500);
                     });
                     break;
                 case '2500 and above':
                     $query->whereHas('prices', function ($priceQ) {
-                        $priceQ->where('final_price', '>=', 2500);
+                        $priceQ->where('sale_price', '>=', 2500);
                     });
                     break;
                 default:
@@ -80,12 +80,12 @@ class ProductController extends Controller
             switch ($direction) {
                 case 'low to high':
                     $products = $products->sortBy(function ($product) {
-                        return $product->prices->min('final_price');
+                        return $product->prices->min('sale_price');
                     });
                     break;
                 case 'high to low':
                     $products = $products->sortByDesc(function ($product) {
-                        return $product->prices->min('final_price');
+                        return $product->prices->min('sale_price');
                     });
                     break;
                 case 'featured':
@@ -228,7 +228,6 @@ class ProductController extends Controller
 
     public function wishlistProduct($productId, $userId) {
         $wishlist = Wishlist::whereUserId($userId)->whereProductId($productId)->first();
-
         if ($wishlist) {
             return $wishlist->id;
         }
