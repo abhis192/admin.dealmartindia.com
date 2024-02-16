@@ -108,15 +108,14 @@ class UserController extends Controller
                 $otherAddresses = UserAddress::whereUserId($data['user_id'])->get();
                 $otherAddresses->each->update(['default'=>0]);
             }
-             UserAddress::create($data);
-               $response = [
-                'success' => true,
-                'message' => 'Address added successfully',
-                'data' => '',
-            ];
-            return response()->json($response,200);
-
              DB::commit();
+             UserAddress::create($data);
+             $response = [
+              'success' => true,
+              'message' => 'Address added successfully',
+              'data' => '',
+          ];
+          return response()->json($response,200);
             }catch(\Exception $e){
                 DB::rollBack();
                    $response = [
