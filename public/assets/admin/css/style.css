@@ -113,8 +113,11 @@ input[switch=status]+label {
 .note-editor .note-toolbar .note-color-all .note-dropdown-menu, .note-popover .popover-content .note-color-all .note-dropdown-menu {
     min-width: 360px;
 }
-.note-editor.note-airframe .note-editing-area, .note-editor.note-frame .note-editing-area {
-    height: 160px;
+.note-editor.note-airframe .note-editing-area .note-editable, .note-editor.note-frame .note-editing-area .note-editable {
+    padding: 10px;
+    overflow: auto;
+    word-wrap: break-word;
+    max-height: 200px;
 }
 
 .order-traking-timeline .verti-timeline .event-list {
