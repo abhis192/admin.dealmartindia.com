@@ -79,8 +79,8 @@ class CategoryController extends Controller
     public function categoryById($id) {
         $productCategories = ProductCategory::whereCategoryId($id)
             ->with('category','products','products.tags','products.prices','products.gallery','products.user:id,name', 'products.type:id,name')
-            ->paginate(10);
-
+            ->get();
+        if ($productCategories->count()>0) {
             foreach ($productCategories as $key => $productCategory) {
                 $productCategories[$key]['products']['image'] = '/storage/product/' . $productCategory['products']['image'];
 
@@ -97,6 +97,21 @@ class CategoryController extends Controller
             $productCategories[$key]['category']['icon'] = '/storage/category/' . $productCategory['category']['icon'];
 
 
-        return response()->json($productCategories);
+            $data['product_list'] = $productCategories;
+
+            $response = [
+                'success' => true,
+                'message' => 'Product list',
+                'data' => $data,
+            ];
+            return response()->json($response,200);
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'Category Not Found',
+                'data' => '',
+            ];
+            return response()->json($response,200);
+     }
     }
 }

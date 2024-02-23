@@ -55,17 +55,17 @@ class TypeController extends Controller
 
     public function typeById($id) {
 
-        $categories = Category::whereStatus(1)->whereTypeId($id)->paginate(10);
+        $categories = Category::whereStatus(1)->whereTypeId($id)->get();
 
         foreach ($categories as $key => $category) {
             $categories[$key]['image'] = '/storage/category/' . $category->image;
             $categories[$key]['icon'] = '/storage/category/' . $category->icon;
         }
-        $data['categories'] = $categories;
+        $data['category_list'] = $categories;
 
         $response = [
             'success' => true,
-            'message' => 'Type list',
+            'message' => 'Category list',
             'data' => $data,
         ];
         return response()->json($response,200);

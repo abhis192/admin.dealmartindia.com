@@ -166,7 +166,7 @@ class ProductController extends Controller
             foreach($product->gallery as $galleries){
                 $galleries->image='/storage/product/' .$galleries->image;
             }
-        }
+        // }
         $product['wishlistId'] = $this->wishlistProduct($product->id, $user_id);
         $data['product']=$product;
 
@@ -177,8 +177,16 @@ class ProductController extends Controller
         ];
 
         return response()->json($response,200);
-    }
+    }else{
+    $response = [
+        'success' => true,
+        'message' => 'Product not available',
+        'data' => '',
+    ];
 
+    return response()->json($response,200);
+}
+}
     //related products
     public function relatedProducts(Request $request, $productId)
     {
