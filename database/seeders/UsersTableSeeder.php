@@ -217,15 +217,10 @@ class UsersTableSeeder extends Seeder
         // HomePages
         if($numberOfHomePages == 0) {
             DB::table('home_pages')->insert([
-                'section_1' => 'default.jpg',
+                'section_1' => '1',
                 'section_2' => '1',
                 'section_3' => '1',
                 'section_4' => 'default.jpg',
-                'section_5' => 'default.jpg',
-                'section_6' => '1',
-                'section_7' => '1',
-                'section_8' => 'default.jpg',
-                'section_9' => 'default.jpg',
                 'created_at' => carbon::now(),
                 'updated_at' => carbon::now()
             ]);

@@ -41,37 +41,36 @@
                         <div class="col-lg-12">
 
                             <!-- Section 01 -->
+
+
+                            <!-- Section 01 - 03 -->
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title mb-0">Section 01</h4>
+                                    <h4 class="card-title mb-0">Section 01 - 03</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-sm-12">
+                                        <div class="col-lg-4">
                                             <div class="form-group">
-                                                {{-- <label class="form-label fw-bold">Site Icon:</label> --}}
-                                                <input type="file" id="input-file-now" name="section_1" class="dropify @error('image') is-invalid @enderror" data-default-file="{{asset('storage/banner/'.$homePage->section_1)}}"/>
-                                                <input type="hidden" name="hidden_section_1" value="{{ $homePage->section_1 }}">
-                                                <small class="text-muted"><b>Example::</b> image size - 1514x153 </small>
+                                                <label for="typeId" class="form-label fw-bold">Select Type:</label>
+                                                <select class="form-control select2" id="typeId" name="section_1" required="required">
+                                                  <option value="">Select Type</option>
+                                                    @foreach($types as $type)
+                                                    <option value="{{$type->id}}"
+                                                        @if ($homePage->section_1==$type->id) selected @endif>
+                                                        {{$type->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="valid-feedback">Looks good!</div>
+                                                <div class="invalid-feedback">This field is required. </div>
+
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="card-footer"></div> -->
-                            </div>
-
-                            <!-- Section 02 - 03 -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">Section 02 - 03</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
                                             <div class="form-group">
                                                 <label for="typeId" class="form-label fw-bold">Select Type:</label>
                                                 <select class="form-control select2" id="typeId" name="section_2" required="required">
-                                                  <option value="">Select Type</option>
+                                                    <option value="">Select Type</option>
                                                     @foreach($types as $type)
                                                     <option value="{{$type->id}}"
                                                         @if ($homePage->section_2==$type->id) selected @endif>
@@ -80,14 +79,13 @@
                                                 </select>
                                                 <div class="valid-feedback">Looks good!</div>
                                                 <div class="invalid-feedback">This field is required. </div>
-
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
                                             <div class="form-group">
                                                 <label for="typeId" class="form-label fw-bold">Select Type:</label>
                                                 <select class="form-control select2" id="typeId" name="section_3" required="required">
-                                                    <option value="">Select Type</option>
+                                                  <option value="">Select Type</option>
                                                     @foreach($types as $type)
                                                     <option value="{{$type->id}}"
                                                         @if ($homePage->section_3==$type->id) selected @endif>
@@ -96,6 +94,7 @@
                                                 </select>
                                                 <div class="valid-feedback">Looks good!</div>
                                                 <div class="invalid-feedback">This field is required. </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -103,14 +102,14 @@
                                 <!-- <div class="card-footer"></div> -->
                             </div>
 
-                            <!-- Section 04 -05 -->
+                            <!-- Section 04 -->
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title mb-0">Section 04 - 05</h4>
+                                    <h4 class="card-title mb-0">Section 04</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-12">
                                             <div class="form-group">
                                                 {{-- <label class="form-label fw-bold">Logo:</label> --}}
                                                 <input type="file" id="input-file-now" name="section_4" class="dropify @error('image') is-invalid @enderror" data-default-file="{{asset('storage/banner/'.$homePage->section_4)}}"/>
@@ -118,89 +117,13 @@
                                                 <small class="text-muted"><b>Example::</b> image size - 500x500 </small>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                {{-- <label class="form-label fw-bold">Logo:</label> --}}
-                                                <input type="file" id="input-file-now" name="section_5" class="dropify @error('image') is-invalid @enderror" data-default-file="{{asset('storage/banner/'.$homePage->section_5)}}"/>
-                                                <input type="hidden" name="hidden_section_5" value="{{ $homePage->section_5 }}">
-                                                <small class="text-muted"><b>Example::</b> image size - 500x500 </small>
-                                            </div>
-                                        </div>
+
                                     </div>
                                 </div>
                                 <!-- <div class="card-footer"></div> -->
                             </div>
 
-                            <!-- Section 06 - 07 -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">Section 06 - 07</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label for="typeId" class="form-label fw-bold">Select Type:</label>
-                                                <select class="form-control select2" id="typeId" name="section_6" required="required">
-                                                    <option value="">Select Type</option>
-                                                    @foreach($types as $type)
-                                                    <option value="{{$type->id}}"
-                                                        @if ($homePage->section_6==$type->id) selected @endif>
-                                                        {{$type->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="valid-feedback">Looks good!</div>
-                                                <div class="invalid-feedback">This field is required. </div>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label for="typeId" class="form-label fw-bold">Select Type:</label>
-                                                <select class="form-control select2" id="typeId" name="section_7" required="required">
-                                                    <option value="">Select Type</option>
-                                                    @foreach($types as $type)
-                                                    <option value="{{$type->id}}"
-                                                        @if ($homePage->section_7==$type->id) selected @endif>
-                                                        {{$type->name}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="valid-feedback">Looks good!</div>
-                                                <div class="invalid-feedback">This field is required. </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="card-footer"></div> -->
-                            </div>
-
-                            <!-- Section 08 -09 -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title mb-0">Section 08 - 09</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                {{-- <label class="form-label fw-bold">Logo:</label> --}}
-                                                <input type="file" id="input-file-now" name="section_8" class="dropify @error('image') is-invalid @enderror" data-default-file="{{asset('storage/banner/'.$homePage->section_8)}}"/>
-                                                <input type="hidden" name="hidden_section_8" value="{{ $homePage->section_8 }}">
-                                                <small class="text-muted"><b>Example::</b> image size - 500x500 </small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                {{-- <label class="form-label fw-bold">Logo:</label> --}}
-                                                <input type="file" id="input-file-now" name="section_9" class="dropify @error('image') is-invalid @enderror" data-default-file="{{asset('storage/banner/'.$homePage->section_9)}}"/>
-                                                <input type="hidden" name="hidden_section_9" value="{{ $homePage->section_9 }}">
-                                                <small class="text-muted"><b>Example::</b> image size - 500x500 </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="card-footer"></div> -->
-                            </div>
 
                         </div>
 
