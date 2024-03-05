@@ -40,7 +40,63 @@ Route::any('auth/google/callback', [App\Http\Controllers\Api\AuthController::cla
 // suraj
 Route::post('login/google', [App\Http\Controllers\Api\AuthController::class, 'loginWithGoogle']);
 
- //ProductController API
+
+
+Route::middleware('auth:sanctum')->group( function () {
+    //user logout
+    Route::post('logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
+
+    //user update
+    Route::get('userDetail/', [App\Http\Controllers\Api\UserController::class, 'view']);
+    Route::post('user/update/{id}', [App\Http\Controllers\Api\AuthController::class, 'update']);
+    Route::post('user/profileupdate/{id}', [App\Http\Controllers\Api\AuthController::class, 'updateProfile']);
+
+    //UserController
+    Route::get('user/addresses', [App\Http\Controllers\Api\UserController::class, 'index']);
+    Route::post('user/add/address', [App\Http\Controllers\Api\UserController::class, 'store']);
+    Route::put('user/update/address/{id}', [App\Http\Controllers\Api\UserController::class, 'update']);
+    Route::delete('user/address/{id}', [App\Http\Controllers\Api\UserController::class, 'destroy']);
+
+    Route::put('update/password', [App\Http\Controllers\Api\UserController::class, 'updatePassword']);
+
+    //PaymentAPIController API
+    Route::get('paymentGateways', [App\Http\Controllers\Api\PaymentApiController::class, 'list']);
+
+    //WishlistAPIController API
+    Route::get('wishlists', [App\Http\Controllers\Api\WishlistApiController::class, 'list']);
+    Route::post('wishlist/add/{productId}', [App\Http\Controllers\Api\WishlistApiController::class, 'wishlistAdd']);
+    Route::post('wishlist/store', [App\Http\Controllers\Api\WishlistApiController::class, 'store']);
+    Route::delete('wishlist/delete/{id}', [App\Http\Controllers\Api\WishlistApiController::class, 'destroy']);
+    Route::get('wishlists/move-to-cart/{id}', [App\Http\Controllers\Api\WishlistApiController::class, 'wishlistMoveToCart']);
+
+    // order
+    Route::get('user/orders', [App\Http\Controllers\Api\OrderController::class, 'index']);
+    Route::post('user/place-order', [App\Http\Controllers\Api\OrderController::class, 'placeOrder']);
+    Route::get('user/cancel-order/{orderId}', [App\Http\Controllers\Api\OrderController::class, 'cancelOrder']);
+    Route::get('user/show-order/{orderId}', [App\Http\Controllers\Api\OrderController::class, 'showOrder']);
+
+    // Cart routes for authenticated users
+    Route::get('user/cart/items', [App\Http\Controllers\Api\CartController::class, 'cart']);
+    Route::post('user/add/cart', [App\Http\Controllers\Api\CartController::class, 'addcart']);
+    Route::put('user/update/cart/{id}', [App\Http\Controllers\Api\CartController::class, 'updatecart']);
+    Route::delete('user/cart/delete/{id}', [App\Http\Controllers\Api\CartController::class, 'destroycart']);
+
+    Route::get('user/cartitems', [App\Http\Controllers\Api\CartController::class, 'cartItems']);
+    Route::delete('user/clear/cart', [App\Http\Controllers\Api\CartController::class, 'clearCart']);
+
+    Route::post('user/productDetailByCity/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productDetailByCity']);
+
+    // coupon
+    Route::post('applyCoupon', [App\Http\Controllers\Api\CouponController::class, 'applyCoupon']);
+
+    Route::get('productDetail/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productBySlug']);
+
+    //ReviewAPIController API
+    Route::get('reviews', [App\Http\Controllers\Api\ReviewApiController::class, 'list']);
+    Route::post('review/store', [App\Http\Controllers\Api\ReviewApiController::class, 'store']);
+    Route::get('reviewByProduct/{id}', [App\Http\Controllers\Api\ReviewApiController::class, 'reviewByProductId']);
+
+    //ProductController API
  Route::post('products', [App\Http\Controllers\Api\ProductController::class, 'list']);
  Route::post('productsByCity', [App\Http\Controllers\Api\ProductController::class, 'listBycity']);
 
@@ -114,58 +170,4 @@ Route::get('cake-flavours', [App\Http\Controllers\Api\CakeFlavourController::cla
 
 //home-page
 Route::get('homePage', [App\Http\Controllers\Api\HomePageController::class, 'list']);
-
-Route::middleware('auth:sanctum')->group( function () {
-    //user logout
-    Route::post('logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
-
-    //user update
-    Route::get('userDetail/', [App\Http\Controllers\Api\UserController::class, 'view']);
-    Route::post('user/update/{id}', [App\Http\Controllers\Api\AuthController::class, 'update']);
-    Route::post('user/profileupdate/{id}', [App\Http\Controllers\Api\AuthController::class, 'updateProfile']);
-
-    //UserController
-    Route::get('user/addresses', [App\Http\Controllers\Api\UserController::class, 'index']);
-    Route::post('user/add/address', [App\Http\Controllers\Api\UserController::class, 'store']);
-    Route::put('user/update/address/{id}', [App\Http\Controllers\Api\UserController::class, 'update']);
-    Route::delete('user/address/{id}', [App\Http\Controllers\Api\UserController::class, 'destroy']);
-
-    Route::put('update/password', [App\Http\Controllers\Api\UserController::class, 'updatePassword']);
-
-    //PaymentAPIController API
-    Route::get('paymentGateways', [App\Http\Controllers\Api\PaymentApiController::class, 'list']);
-
-    //WishlistAPIController API
-    Route::get('wishlists', [App\Http\Controllers\Api\WishlistApiController::class, 'list']);
-    Route::post('wishlist/add/{productId}', [App\Http\Controllers\Api\WishlistApiController::class, 'wishlistAdd']);
-    Route::post('wishlist/store', [App\Http\Controllers\Api\WishlistApiController::class, 'store']);
-    Route::delete('wishlist/delete/{id}', [App\Http\Controllers\Api\WishlistApiController::class, 'destroy']);
-    Route::get('wishlists/move-to-cart/{id}', [App\Http\Controllers\Api\WishlistApiController::class, 'wishlistMoveToCart']);
-
-    // order
-    Route::get('user/orders', [App\Http\Controllers\Api\OrderController::class, 'index']);
-    Route::post('user/place-order', [App\Http\Controllers\Api\OrderController::class, 'placeOrder']);
-    Route::get('user/cancel-order/{orderId}', [App\Http\Controllers\Api\OrderController::class, 'cancelOrder']);
-    Route::get('user/show-order/{orderId}', [App\Http\Controllers\Api\OrderController::class, 'showOrder']);
-
-    // Cart routes for authenticated users
-    Route::get('user/cart/items', [App\Http\Controllers\Api\CartController::class, 'cart']);
-    Route::post('user/add/cart', [App\Http\Controllers\Api\CartController::class, 'addcart']);
-    Route::put('user/update/cart/{id}', [App\Http\Controllers\Api\CartController::class, 'updatecart']);
-    Route::delete('user/cart/delete/{id}', [App\Http\Controllers\Api\CartController::class, 'destroycart']);
-
-    Route::get('user/cartitems', [App\Http\Controllers\Api\CartController::class, 'cartItems']);
-    Route::delete('user/clear/cart', [App\Http\Controllers\Api\CartController::class, 'clearCart']);
-
-    Route::post('user/productDetailByCity/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productDetailByCity']);
-
-    // coupon
-    Route::post('applyCoupon', [App\Http\Controllers\Api\CouponController::class, 'applyCoupon']);
-
-    Route::get('productDetail/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productBySlug']);
-
-    //ReviewAPIController API
-    Route::get('reviews', [App\Http\Controllers\Api\ReviewApiController::class, 'list']);
-    Route::post('review/store', [App\Http\Controllers\Api\ReviewApiController::class, 'store']);
-    Route::get('reviewByProduct/{id}', [App\Http\Controllers\Api\ReviewApiController::class, 'reviewByProductId']);
 });
