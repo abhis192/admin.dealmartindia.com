@@ -10,34 +10,45 @@ use App\Models\Category;
 class TypeController extends Controller
 {
     public function categoryByTypeSlug($slug) {
-        $type = Type::whereStatus(1)-> whereSlug($slug)->first();
+        $resp = Type::where('status', 1)->whereSlug($slug)->orderBy('order','asc')
+        ->with(['categories' => function ($query) {
+            $query->where('status', 1)->orderBy('order','asc')
+                ->with('subCategories');
+        }])
+        ->first();
 
-        if($type) {
-            $categories = Category::whereTypeId($type->id)->get();
-            foreach ($categories as $key => $category) {
-                $categories[$key]['image'] = '/storage/category/' . $category->image;
-                $categories[$key]['icon'] = '/storage/category/' . $category->icon;
-            }
-            $data['category_list'] = $categories;
+        // $data = $resp;
+        // $data = $resp->categories;
+        $categories = $resp->categories->toArray();
+        $subCategories = [];
 
-            $response = [
-                'success' => true,
-                'message' => 'Category list',
-                'data' => $data,
-            ];
-            return response()->json($response,200);
-        } else {
-            $response = [
-                'success' => true,
-                'message' => 'Type Not Found',
-                'data' => '',
-            ];
-            return response()->json($response,200);
-        }
+foreach ($categories as &$category) {
+    $subCategories = array_merge($subCategories, $category['sub_categories']);
+    unset($category['sub_categories']); // Remove subcategories from the category
+
+    $category['image'] = '/storage/category/' . $category['image'];
+    $category['icon'] = '/storage/category/' . $category['icon'];
+}
+
+foreach ($subCategories as &$subCategory) {
+    $subCategory['image'] = '/storage/category/' . $subCategory['image'];
+    $subCategory['icon'] = '/storage/category/' . $subCategory['icon'];
+}
+
+$data['category_list'] = array_merge($categories, $subCategories);
+        $response = [
+            'success' => true,
+            'message' => 'category list',
+            'data' => $data,
+        ];
+
+        return response()->json($response,200);
+
     }
 
+
     public function list() {
-        $types = Type::whereStatus(1)-> get();
+        $types = Type::whereStatus(1)->orderBy('order','asc')-> get();
 
         foreach ($types as $key => $type) {
             $types[$key]['image'] = '/storage/type/' . $type->image;
@@ -55,19 +66,40 @@ class TypeController extends Controller
 
     public function typeById($id) {
 
-        $categories = Category::whereStatus(1)->whereTypeId($id)->get();
+        $resp = Type::where('status', 1)->whereId($id)->orderBy('order','asc')
+        ->with(['categories' => function ($query) {
+            $query->where('status', 1)
+                ->with('subCategories');
+        }])
+        ->first();
 
-        foreach ($categories as $key => $category) {
-            $categories[$key]['image'] = '/storage/category/' . $category->image;
-            $categories[$key]['icon'] = '/storage/category/' . $category->icon;
-        }
-        $data['category_list'] = $categories;
+        // $data = $resp;
+        // $data = $resp->categories;
+        $categories = $resp->categories->toArray();
+$subCategories = [];
 
+foreach ($categories as &$category) {
+    $subCategories = array_merge($subCategories, $category['sub_categories']);
+    unset($category['sub_categories']); // Remove subcategories from the category
+
+    $category['image'] = '/storage/category/' . $category['image'];
+    $category['icon'] = '/storage/category/' . $category['icon'];
+}
+
+foreach ($subCategories as &$subCategory) {
+    $subCategory['image'] = '/storage/category/' . $subCategory['image'];
+    $subCategory['icon'] = '/storage/category/' . $subCategory['icon'];
+}
+
+
+$data['category_list'] = array_merge($categories, $subCategories);
         $response = [
             'success' => true,
-            'message' => 'Category list',
+            'message' => 'category list',
             'data' => $data,
         ];
+
         return response()->json($response,200);
+
     }
 }

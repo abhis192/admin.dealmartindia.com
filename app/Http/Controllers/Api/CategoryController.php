@@ -53,7 +53,7 @@ class CategoryController extends Controller
 
     //show data of category table
     public function list() {
-        $categories = Category::whereStatus(1)->with('type')
+        $categories = Category::whereStatus(1)->orderBy('order','asc')->with('type')
             ->get();
 
         foreach ($categories as $key => $category) {
