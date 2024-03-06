@@ -38,9 +38,23 @@ class UserController extends Controller
 
                 'addresses' => $profile->addresses
             ];
-            return response()->json($modifiedProfile);
+            // return response()->json($modifiedProfile);
+            $data['user_detail'] = $modifiedProfile;
+
+            $response = [
+                'success' => true,
+                'message' => 'user detail',
+                'data' => $data,
+            ];
+
+            return response()->json($response,200);
         } else {
-            return response()->json(['error' => 'User not found.'], 404);
+            $response = [
+                'success' => false,
+                'message' => 'User not found.',
+                'data' => $data,
+            ];
+            return response()->json($response,200);
         }
     }
     /**

@@ -198,50 +198,42 @@ class AuthController extends Controller
     }
 
     //update profile
-    public function updateProfile(Request $request, string $id)
+    public function updateProfile(Request $request)
     {
         $validator=Validator::make($request->all(),[
+            $user=Auth()->user(),
             // 'name' => 'required|string|min:3|max:255',
-            // 'mobile'=>'required',
-            // 'email'=> 'required|unique:users',
+            // 'mobile'=>'unique:users,mobile',
+            'mobile' => 'unique:users,mobile,' . $user->id,
+            // 'email'=> 'unique:users',
+            'email' => 'unique:users,email,' . $user->id,
             // 'password' => ['required','confirmed'],
             // 'password_confirmation'=>['required'],
         ]);
+
+        // dd($userauth);
         if($validator->fails()){
             return response()->json($validator->messages(),400);
         }
 
-        $user=User::find($id);
-        if(is_null($user)){
-            return response()->json([
-                'message'=>'User does not exists',
-                'status'=>0
-            ],
-            404
-        );
-        }else{
+        // $user=User::find($user->$id);
+        // if(is_null($user)){
+        //     $response = [
+        //         'success' => false,
+        //         'message' => 'User does not exists',
+        //         'data' => '',
+        //     ];
+        //     return response()->json($response,200);
+        // }else{
             DB::beginTransaction();
             try{
                 // $useraddress=$request->all();
-              $user->role_id=$request['role_id'];
+              $user->role_id=3;
               $user->name=$request['name'];
               $user->email=$request['email'];
               $user->mobile=$request['mobile'];
               $user->dob=$request['dob'];
               $user->gender=$request['gender'];
-
-              if($user->avatar=$request->hasFile('avatar')){
-                $fileImage = $user->avatar=$request->file('avatar');
-                $fileImageName = rand() . '.' . $fileImage->getClientOriginalName();
-                $fileImage->storeAs('public/user/',$fileImageName);
-                $user->avatar=$request['avatar'] = $fileImageName;
-              }
-            // }
-
-              $user->business=$request['business'];
-              $user->address=$request['address'];
-              $user->gst_no=$request['gst_no'];
-              $user->gst_name=$request['gst_name'];
               $user->save();
 
                 DB::commit();
@@ -249,25 +241,24 @@ class AuthController extends Controller
                 DB::rollBack();
                 $user=null;
             }
-           if(is_null($user)){
-            return response()->json([
-                'message'=>'Internal Server Error',
-                'status'=>0,
-                'error_msg'=>$err->getMessage(),
-            ],
-            500
-        );
-           }else{
-            return response()->json([
-                'message'=>'User Updated Successfully',
-                'status'=>1
-            ],
-            200
-        );
+        //    if(is_null($user)){
+        //     $response = [
+        //         'success' => false,
+        //         'message' => 'Internal Server Error',
+        //         'error_msg'=>$err->getMessage(),
+        //         'data' => '',
+        //     ];
+        //     return response()->json($response,200);
+        //    }else{
+        $response = [
+            'success' => true,
+            'message' => 'User Updated Successfully',
+            'data' => '',
+        ];
+        return response()->json($response,200);
            }
-
-        }
-    }
+        // }
+    // }
 
     //logout user
     public function logout(){

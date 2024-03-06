@@ -48,8 +48,8 @@ Route::middleware('auth:sanctum')->group( function () {
 
     //user update
     Route::get('userDetail/', [App\Http\Controllers\Api\UserController::class, 'view']);
-    Route::post('user/update/{id}', [App\Http\Controllers\Api\AuthController::class, 'update']);
-    Route::post('user/profileupdate/{id}', [App\Http\Controllers\Api\AuthController::class, 'updateProfile']);
+    // Route::post('user/update/{id}', [App\Http\Controllers\Api\AuthController::class, 'update']);
+    Route::post('user/profileupdate', [App\Http\Controllers\Api\AuthController::class, 'updateProfile']);
 
     //UserController
     Route::get('user/addresses', [App\Http\Controllers\Api\UserController::class, 'index']);

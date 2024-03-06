@@ -160,15 +160,64 @@ class ProductController extends Controller
             }
 
                // Modify the image and icon paths for the nested type relationship
-               $category->category->type->image = '/storage/type/' . $category->category->type->image;
-               $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
+            //    $category->category->type->image = '/storage/type/' . $category->category->type->image;
+            //    $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
 
             foreach($product->gallery as $galleries){
                 $galleries->image='/storage/product/' .$galleries->image;
             }
         // }
         $product['wishlistId'] = $this->wishlistProduct($product->id, $user_id);
-        $data['product']=$product;
+
+
+        {
+            $productc = Product::findOrFail($product->id);
+            $products = Product::whereCategoryId($productc->category_id)->inRandomOrder()->take(5)->wherePublished(1)->where('id', '!=', $productc->id)->with('user:id,name', 'type:id,name', 'categories.category', 'categories.category.type', 'tags', 'gallery', 'reviews')
+            ->get();
+
+            $transformedProducts = $products->map(function ($product) {
+                $product['image'] = '/storage/product/' . $product->image;
+
+                foreach ($product->gallery as $galleryKey => $gallery) {
+                    $product['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery->image;
+                }
+
+                foreach ($product->categories as $categoryKey => $category) {
+                    $categoryImagePath = $category->category->image;
+                    $categoryIconPath = $category->category->icon;
+
+                    // Check if the path already contains '/storage/category/'
+                    if (strpos($categoryImagePath, '/storage/category/') !== 0) {
+                        $product['categories'][$categoryKey]['category']['image'] = '/storage/category/' . $categoryImagePath;
+                        $product['categories'][$categoryKey]['category']['icon'] = '/storage/category/' . $categoryIconPath;
+                    }
+
+                    $categoryImagePath = $category->category->type->image??null;
+                    $categoryIconPath = $category->category->type->icon??null;
+
+                    // Check if the path already contains '/storage/type/'
+                    // if (strpos($categoryImagePath, '/storage/type/') != null)
+                    if ( ($categoryImagePath != null) && strpos($categoryImagePath, '/storage/type/') !== 0) {
+                        $category->category->type->image = '/storage/type/' . $category->category->type->image;
+                        $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
+                    }
+                }
+
+                return $product;
+            });
+            // $data['products']=$transformedProducts;
+
+            // $response = [
+            //     'success' => true,
+            //     'message' => 'Product list',
+            //     'data' => $data,
+            // ];
+
+            // return response()->json($response,200);
+        }
+
+        $data['product_detail']=$product;
+        $data['related_products']=$transformedProducts;
 
         $response = [
             'success' => true,
