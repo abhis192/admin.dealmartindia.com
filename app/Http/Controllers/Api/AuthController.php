@@ -202,31 +202,25 @@ class AuthController extends Controller
     {
         $validator=Validator::make($request->all(),[
             $user=Auth()->user(),
-            // 'name' => 'required|string|min:3|max:255',
-            // 'mobile'=>'unique:users,mobile',
+            'name'=>'required',
             'mobile' => 'unique:users,mobile,' . $user->id,
             // 'email'=> 'unique:users',
             'email' => 'unique:users,email,' . $user->id,
-            // 'password' => ['required','confirmed'],
-            // 'password_confirmation'=>['required'],
         ]);
 
-        // dd($userauth);
-        if($validator->fails()){
-            return response()->json($validator->messages(),400);
-        }
+        if ($validator->fails()) {
+            $errorMessage = implode(' ', $validator->messages()->all());
 
-        // $user=User::find($user->$id);
-        // if(is_null($user)){
-        //     $response = [
-        //         'success' => false,
-        //         'message' => 'User does not exists',
-        //         'data' => '',
-        //     ];
-        //     return response()->json($response,200);
-        // }else{
-            DB::beginTransaction();
-            try{
+            $response = [
+                'success' => false,
+                'message' => $errorMessage,
+                'data' => '',
+            ];
+
+            return response()->json($response, 200);
+        }
+            // DB::beginTransaction();
+            // try{
                 // $useraddress=$request->all();
               $user->role_id=3;
               $user->name=$request['name'];
@@ -234,13 +228,14 @@ class AuthController extends Controller
               $user->mobile=$request['mobile'];
               $user->dob=$request['dob'];
               $user->gender=$request['gender'];
+            //   dd($user)
               $user->save();
 
-                DB::commit();
-            }catch(\Exception $err){
-                DB::rollBack();
-                $user=null;
-            }
+            //     DB::commit();
+            // }catch(\Exception $err){
+            //     DB::rollBack();
+            //     // $user=null;
+            // }
         //    if(is_null($user)){
         //     $response = [
         //         'success' => false,
