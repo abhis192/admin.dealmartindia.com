@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\UserAddress;
 use App\Models\Cart;
 use App\Models\User;
+use App\Models\City;
+use App\Models\ConfigShipping;
 use Hash;
 use Auth;
 use Illuminate\Support\Facades\DB;
@@ -431,4 +433,102 @@ class CartController extends Controller
 
          }
     //  }
+
+
+
+
+     //cartitems for auth user
+     public function checkout(Request $request)
+     {
+         $user = auth()->user();
+         if ($user) {
+             $uid = $user->id;
+         }
+
+         if (auth()->check()) {
+             // Authenticated user logic
+             $cart = Cart::whereUserId($uid)->with('product','product.type','product.categories','product.categories','product.prices')->get();
+
+             if($cart->count()>0){
+                 $totalbag = 0;
+                 $subtotal = 0;
+                 $offer_discount = 0;
+                 $coupon_discount = 0;
+                 $delivery_charges = 0;
+                 $grand_total = 0;
+                 foreach ($cart as $key=> $item) {
+
+                     if($item->discount_type=='Percentage'){
+                         $cal_discount_value=((($item->discount_value)/100)*($item->regular_price));
+                     }else{
+                         $cal_discount_value= $item->discount_value;
+                     }
+
+                     $subtotal = $subtotal + ($item->sale_price)*($item->qty);
+                     $totalbag = $totalbag + ($item->regular_price)*($item->qty);
+                     $offer_discount = $offer_discount + ($cal_discount_value)*($item->qty);
+
+                     $coupon_discount = $request->get('coupon_discount');
+                     // $heart_shape = $heart_shape + ($item->heart_shape)*($item->qty);
+                     // $eggless = $eggless + ($item->eggless)*($item->qty);
+
+                     if(!empty($item['product_id'])){
+                     $item['product_name']=$item['product']['name'];
+
+                     }
+                 }
+                 $grand_total = $totalbag - $offer_discount - $coupon_discount;
+
+                 $config_shipping=ConfigShipping::first();
+                  $min_order_to_ship =$config_shipping->min_order_to_ship;
+                  $universal_ship_cost=$config_shipping->universal_ship_cost;
+                 if($grand_total <= $min_order_to_ship){
+
+                    $city_id = $request->get('city_id');
+                    $city=City::whereId($city_id)->first();
+                    $shipping_cost = $city->shipping_cost??null;
+
+                    if($shipping_cost){
+                        $grand_total = $grand_total + $shipping_cost;
+                        $delivery_charges = $delivery_charges + $shipping_cost;
+
+                    }else{
+                        $grand_total = $grand_total + $universal_ship_cost;
+                        $delivery_charges = $delivery_charges + $universal_ship_cost;
+                    }
+                 }
+
+
+                 $cartcalculation['total_bag'] = $totalbag;
+                 $cartcalculation['subtotal'] = $subtotal;
+                 $cartcalculation['offer_discount'] = $offer_discount;
+                 $cartcalculation['coupon_discount'] = $coupon_discount;
+                 $cartcalculation['delivery_charges'] = $delivery_charges;
+                 $cartcalculation['grand_total'] = round($grand_total, 2);
+
+
+                 $data['checkout_calculation'] = $cartcalculation;
+                 $data['cart_items'] = $cart;
+
+                 $response = [
+                     'success' => true,
+                     'message' => '',
+                     'data' => $data,
+                 ];
+
+                 return response()->json($response,200);
+
+             }else{
+                 $response = [
+                     'success' => false,
+                     'message' => 'cart is empty',
+                     'data' => '',
+                 ];
+
+                 return response()->json($response,200);
+
+             }
+
+         }
+     }
 }

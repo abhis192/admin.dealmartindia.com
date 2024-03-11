@@ -56,4 +56,56 @@ class HomePageController extends Controller
         return response()->json($response,200);
 
     }
+
+
+public function categoryByTypeList(){
+    $result = [];
+
+            $resp = Type::where('status', 1)->orderBy('order','asc')
+            ->with(['categories' => function ($query) {
+                $query->where('status', 1)
+                    ->with('subCategories');
+            }])
+            ->get();
+
+          foreach($resp as $resps){
+            $typeData = [
+                        'type_id' => $resps->id,
+                        'type_name' => $resps->name,
+                        'type_slug' => $resps->slug,
+                        // 'categories' => [],
+                    ];
+
+            $categories = $resps->categories->toArray();
+            $subCategories = [];
+
+            foreach ($categories as &$category) {
+                $subCategories = array_merge($subCategories, $category['sub_categories']);
+                unset($category['sub_categories']); // Remove subcategories from the category
+
+                $category['image'] = '/storage/category/' . $category['image'];
+                $category['icon'] = '/storage/category/' . $category['icon'];
+            }
+
+            foreach ($subCategories as &$subCategory) {
+                $subCategory['image'] = '/storage/category/' . $subCategory['image'];
+                $subCategory['icon'] = '/storage/category/' . $subCategory['icon'];
+            }
+
+            $typeData['categories'] = array_merge($categories, $subCategories);
+        // }
+        // dd('done');
+        $result[] = $typeData;
+    }
+
+    $response = [
+        'success' => true,
+        'message' => 'Category By Type list',
+        'data' => $result,
+    ];
+
+    return response()->json($response, 200);
+}
+
+
 }

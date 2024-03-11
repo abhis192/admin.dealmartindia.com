@@ -76,7 +76,7 @@ $data['category_list'] = array_merge($categories, $subCategories);
         // $data = $resp;
         // $data = $resp->categories;
         $categories = $resp->categories->toArray();
-$subCategories = [];
+        $subCategories = [];
 
 foreach ($categories as &$category) {
     $subCategories = array_merge($subCategories, $category['sub_categories']);

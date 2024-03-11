@@ -84,6 +84,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('user/cartitems', [App\Http\Controllers\Api\CartController::class, 'cartItems']);
     Route::delete('user/clear/cart', [App\Http\Controllers\Api\CartController::class, 'clearCart']);
 
+    Route::post('user/checkout', [App\Http\Controllers\Api\CartController::class, 'checkout']);
+
     Route::post('user/productDetailByCity/{slug}', [App\Http\Controllers\Api\ProductController::class, 'productDetailByCity']);
 
     // coupon
@@ -170,4 +172,7 @@ Route::get('cake-flavours', [App\Http\Controllers\Api\CakeFlavourController::cla
 
 //home-page
 Route::get('homePage', [App\Http\Controllers\Api\HomePageController::class, 'list']);
+
+//home-page
+Route::get('categoryByTypeList', [App\Http\Controllers\Api\HomePageController::class, 'categoryByTypeList']);
 });
