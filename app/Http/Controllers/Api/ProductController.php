@@ -104,6 +104,11 @@ class ProductController extends Controller
                 $product['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery->image;
             }
 
+            foreach ($product->prices as $pricesKey => $prices) {
+                if($product['prices'][$pricesKey]['discount_type'] =="Percentage")
+                  $product['prices'][$pricesKey]['discount_type'] = "%";
+            }
+
             foreach ($product->categories as $categoryKey => $category) {
                 $categoryImagePath = $category->category->image;
                 $categoryIconPath = $category->category->icon;
@@ -162,6 +167,10 @@ class ProductController extends Controller
                // Modify the image and icon paths for the nested type relationship
             //    $category->category->type->image = '/storage/type/' . $category->category->type->image;
             //    $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
+            foreach ($product->prices as $pricesKey => $prices) {
+                if($product['prices'][$pricesKey]['discount_type'] =="Percentage")
+                  $product['prices'][$pricesKey]['discount_type'] = "%";
+            }
 
             foreach($product->gallery as $galleries){
                 $galleries->image='/storage/product/' .$galleries->image;
@@ -177,6 +186,11 @@ class ProductController extends Controller
 
             $transformedProducts = $products->map(function ($product) {
                 $product['image'] = '/storage/product/' . $product->image;
+
+                foreach ($product->prices as $pricesKey => $prices) {
+                    if($product['prices'][$pricesKey]['discount_type'] =="Percentage")
+                      $product['prices'][$pricesKey]['discount_type'] = "%";
+                }
 
                 foreach ($product->gallery as $galleryKey => $gallery) {
                     $product['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery->image;
@@ -249,7 +263,10 @@ class ProductController extends Controller
             foreach ($product->gallery as $galleryKey => $gallery) {
                 $product['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery->image;
             }
-
+            foreach ($product->prices as $pricesKey => $prices) {
+                if($product['prices'][$pricesKey]['discount_type'] =="Percentage")
+                  $product['prices'][$pricesKey]['discount_type'] = "%";
+            }
             foreach ($product->categories as $categoryKey => $category) {
                 $categoryImagePath = $category->category->image;
                 $categoryIconPath = $category->category->icon;
