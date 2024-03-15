@@ -25,9 +25,19 @@ class CategoryController extends Controller
                 foreach ($productCategory['products']['gallery'] as $galleryKey => $gallery) {
                     $productCategories[$key]['products']['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery['image'];
                 }
+
+                foreach ($productCategory['products']['prices'] as $pricesKey => $prices) {
+                    if($productCategories[$key]['products']['prices'][$pricesKey]['discount_type'] =="Percentage")
+                    $productCategories[$key]['products']['prices'][$pricesKey]['discount_type'] = '%';
+                }
             }
-             foreach ($productCategory['products']['gallery'] as $galleryKey => $gallery) {
-                    $productCategories[$key]['products']['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery['image'];
+            //  foreach ($productCategory['products']['gallery'] as $galleryKey => $gallery) {
+            //         $productCategories[$key]['products']['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery['image'];
+            //     }
+
+                foreach ($productCategory['products']['prices'] as $pricesKey => $prices) {
+                    if($productCategories[$key]['products']['prices'][$pricesKey]['discount_type'] =="Percentage")
+                    $productCategories[$key]['products']['prices'][$pricesKey]['discount_type'] = '%';
                 }
 
             $productCategories[$key]['category']['image'] = '/storage/category/' . $productCategory['category']['image'];
@@ -86,6 +96,11 @@ class CategoryController extends Controller
 
                 foreach ($productCategory['products']['gallery'] as $galleryKey => $gallery) {
                     $productCategories[$key]['products']['gallery'][$galleryKey]['image'] = '/storage/product/' . $gallery['image'];
+                }
+
+                foreach ($productCategory['products']['prices'] as $pricesKey => $prices) {
+                    if($productCategories[$key]['products']['prices'][$pricesKey]['discount_type'] =="Percentage")
+                    $productCategories[$key]['products']['prices'][$pricesKey]['discount_type'] = '%';
                 }
             }
 
