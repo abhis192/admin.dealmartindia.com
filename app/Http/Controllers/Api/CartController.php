@@ -475,6 +475,7 @@ class CartController extends Controller
                      if(!empty($item['product_id'])){
                      $item['product_name']=$item['product']['name'];
 
+                     $item['product']['image']='/storage/product/'.$item['product']['image'];
                      }
                  }
                  $grand_total = $totalbag - $offer_discount - $coupon_discount;

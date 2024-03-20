@@ -163,10 +163,6 @@ class ProductController extends Controller
                 // $category->category->type->image = '/storage/type/' . $category->category->type->image;
                 // $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
             }
-
-               // Modify the image and icon paths for the nested type relationship
-            //    $category->category->type->image = '/storage/type/' . $category->category->type->image;
-            //    $category->category->type->icon = '/storage/type/' . $category->category->type->icon;
             foreach ($product->prices as $pricesKey => $prices) {
                 if($product['prices'][$pricesKey]['discount_type'] =="Percentage")
                   $product['prices'][$pricesKey]['discount_type'] = "%";

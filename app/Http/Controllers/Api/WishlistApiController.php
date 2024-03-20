@@ -19,17 +19,26 @@ class WishlistApiController extends Controller
         $wishlists = Wishlist::whereUserId($user)->with('user:id,name', 'product','product.tags','product.type:id,name','product.categories.category:id,name','product.prices','product.gallery','product.reviews')
         ->get();
 
-        if($wishlists->count()>0){
+        if ($wishlists->count() > 0) {
+            // Loop through each wishlist to update the image paths
+            foreach ($wishlists as $wishlist) {
+                $wishlist->product->image = '/storage/product/' . $wishlist->product->image;
+            }
+
+            // Prepare the response data
             $data['wishlists'] = $wishlists;
 
+            // Build the response
             $response = [
                 'success' => true,
-                'message' => 'wishlist list',
+                'message' => 'Wishlist list',
                 'data' => $data,
             ];
 
-            return response()->json($response,200);
-        }else{
+            // Send JSON response
+            return response()->json($response, 200);
+        }
+        else{
         $response = [
             'success' => true,
             'message' => 'Wishlist empty',
